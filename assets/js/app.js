@@ -4,16 +4,7 @@
 const appState = {
     cart: JSON.parse(localStorage.getItem('cart')) || [],
     wishlist: JSON.parse(localStorage.getItem('wishlist')) || [],
-    products: [
-    { id: 1, name: 'Premium Smart Watch', category: 'Accessories', price: 299, oldPrice: 399, rating: 5, ratingCount: 128, badge: 'Hot', icon: 'watch' },
-    { id: 2, name: 'Wireless Headphones', category: 'Electronics', price: 199, oldPrice: null, rating: 4, ratingCount: 89, badge: 'New', icon: 'headphones' },
-    { id: 3, name: 'Smart Backpack', category: 'Bags', price: 149, oldPrice: 179, rating: 5, ratingCount: 256, badge: null, icon: 'backpack' },
-    { id: 4, name: 'Designer Sunglasses', category: 'Accessories', price: 89, oldPrice: 129, rating: 4, ratingCount: 67, badge: 'Sale', icon: 'sunglasses' },
-    { id: 5, name: 'Leather Wallet', category: 'Accessories', price: 59, oldPrice: null, rating: 5, ratingCount: 312, badge: null, icon: 'wallet' },
-    { id: 6, name: 'Fitness Tracker', category: 'Electronics', price: 129, oldPrice: null, rating: 5, ratingCount: 445, badge: null, icon: 'mobile-alt' },
-    { id: 7, name: 'Coffee Maker', category: 'Home', price: 199, oldPrice: null, rating: 4, ratingCount: 198, badge: null, icon: 'mug-hot' },
-    { id: 8, name: 'Yoga Mat', category: 'Sports', price: 39, oldPrice: null, rating: 5, ratingCount: 567, badge: null, icon: 'spoon' }
-  ],
+    products: [], // Will be populated by PHP from database
     currentSliderIndex: 0
 };
 
@@ -222,10 +213,10 @@ function updateSlider() {
 // =============================================
 function renderProductCard(product) {
     return `
-        <div class="product-card">
+        <div class="product-card" onclick="window.location.href='product.php?id=${product.id}'">
             <div class="product-image">
                 ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
-                <div class="product-actions">
+                <div class="product-actions" onclick="event.stopPropagation()">
                     <button onclick="toggleWishlist(${product.id})"><i class="fas fa-heart"></i></button>
                 </div>
                 <i class="fas fa-${product.icon}"></i>
@@ -238,7 +229,7 @@ function renderProductCard(product) {
                     <span class="price-current">$${product.price}</span>
                     ${product.oldPrice ? `<span class="price-old">$${product.oldPrice}</span>` : ''}
                 </div>
-                <button onclick="addToCart(${product.id})" class="btn btn-primary btn-sm" style="width: 100%; margin-top: 1rem;">
+                <button onclick="event.stopPropagation(); addToCart(${product.id})" class="btn btn-primary btn-sm" style="width: 100%; margin-top: 1rem;">
                     <i class="fas fa-shopping-cart"></i> Add to Cart
                 </button>
             </div>
@@ -345,11 +336,11 @@ function initSearch() {
     if (searchInput && searchBtn) {
         const handleSearch = () => {
             const query = searchInput.value.toLowerCase().trim();
-            if (window.location.pathname.includes('products.html')) {
+            if (window.location.pathname.includes('products.php')) {
                 filterProducts(query);
             } else if (query) {
                 localStorage.setItem('searchQuery', query);
-                window.location.href = 'products.html';
+                window.location.href = 'products.php';
             }
         };
         searchBtn.addEventListener('click', handleSearch);

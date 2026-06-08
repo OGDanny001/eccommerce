@@ -3,19 +3,34 @@
 require 'config/db.php';
 
 // Get and sanitize product ID from URL parameter
-$productId = isset($_GET['id']) ? intval($_GET['id']) : 1;
+$productId = isset($_GET['id']) ? intval($_GET['id']) : null;
 
 // Initialize product data
 $product = null;
+$allProducts = [];
 
-// Fetch product using prepared statement
+// Fetch all products for appState and related products
 if ($conn) {
-    $stmt = $conn->prepare("SELECT id, name, description, price, image, category_id, stock FROM products WHERE id = ?");
-    $stmt->bind_param("i", $productId);
+    $stmt = $conn->prepare("SELECT p.id, p.name, p.description, p.price, p.image, p.category_id, p.stock, c.name as category_name 
+                            FROM products p 
+                            LEFT JOIN categories c ON p.category_id = c.id 
+                            ORDER BY p.id ASC");
     $stmt->execute();
     $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
+    while ($row = $result->fetch_assoc()) {
+        $allProducts[] = $row;
+    }
     $stmt->close();
+
+    // Fetch the specific product
+    if ($productId) {
+        foreach ($allProducts as $p) {
+            if ($p['id'] === $productId) {
+                $product = $p;
+                break;
+            }
+        }
+    }
 }
 
 // Set page title
@@ -40,6 +55,15 @@ include 'includes/header.php';
         font-size: 10rem;
         box-shadow: var(--shadow-sm);
         color: var(--text-muted);
+    }
+
+    .product-card {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
     }
 
     .qty-selector {
@@ -120,20 +144,7 @@ include 'includes/header.php';
                 </div>
                 <div class="product-info-section">
                     <p class="product-category">
-                        <?php
-                        // Get category name
-                        $categoryName = "Category";
-                        if ($product['category_id']) {
-                            $stmt = $conn->prepare("SELECT name FROM categories WHERE id = ?");
-                            $stmt->bind_param("i", $product['category_id']);
-                            $stmt->execute();
-                            $catResult = $stmt->get_result();
-                            $category = $catResult->fetch_assoc();
-                            if ($category) $categoryName = $category['name'];
-                            $stmt->close();
-                        }
-                        echo htmlspecialchars($categoryName);
-                        ?>
+                        <?php echo htmlspecialchars($product['category_name'] ?? 'Category'); ?>
                     </p>
                     <h1 style="margin-bottom: 1rem"><?php echo htmlspecialchars($product['name']); ?></h1>
                     <div class="product-rating" style="margin-bottom: 1rem">
@@ -209,13 +220,67 @@ include 'includes/header.php';
             <h2>Related Products</h2>
             <p>You might also like</p>
         </div>
-        <div class="product-grid" id="related-grid"></div>
+        <div class="product-grid" id="related-grid">
+            <?php
+            // Get related products (same category, exclude current product)
+            $relatedProducts = array_filter($allProducts, function ($p) use ($product) {
+                return $product && $p['id'] !== $product['id'] && $p['category_id'] === $product['category_id'];
+            });
+            // If no related products, show random products
+            if (empty($relatedProducts)) {
+                $relatedProducts = array_filter($allProducts, function ($p) use ($product) {
+                    return $product && $p['id'] !== $product['id'];
+                });
+            }
+            // Show up to 4 related products
+            $relatedProducts = array_slice($relatedProducts, 0, 4);
+            foreach ($relatedProducts as $p):
+            ?>
+                <div class="product-card" onclick="window.location.href='product.php?id=<?php echo $p['id']; ?>'">
+                    <div class="product-image">
+                        <div class="product-actions" onclick="event.stopPropagation()">
+                            <button onclick="toggleWishlist(<?php echo $p['id']; ?>)"><i class="fas fa-heart"></i></button>
+                        </div>
+                        <?php if ($p['image']): ?>
+                            <img src="assets/images/<?php echo htmlspecialchars($p['image']); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" style="width:100%;height:200px;object-fit:cover;" />
+                        <?php else: ?>
+                            <i class="fas fa-box"></i>
+                        <?php endif; ?>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category"><?php echo htmlspecialchars($p['category_name'] ?? 'Category'); ?></div>
+                        <h4 class="product-title"><?php echo htmlspecialchars($p['name']); ?></h4>
+                        <div class="product-price">
+                            <span class="price-current">$<?php echo number_format($p['price'], 2); ?></span>
+                        </div>
+                        <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>)" class="btn btn-primary btn-sm" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </section>
 
 <?php include 'includes/footer.php'; ?>
 
 <script>
+    // Pass products from PHP to JS for cart/wishlist functions
+    const dbProducts = <?php echo json_encode($allProducts); ?>;
+    // Map DB products to appState.products format
+    appState.products = dbProducts.map(p => ({
+        id: p.id,
+        name: p.name,
+        category: p.category_name,
+        price: p.price,
+        oldPrice: null,
+        rating: 5,
+        ratingCount: 10,
+        badge: null,
+        icon: 'box'
+    }));
+
     let currentQty = 1;
     const productId = <?php echo $productId; ?>;
 
