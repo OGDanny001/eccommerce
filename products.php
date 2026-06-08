@@ -157,10 +157,10 @@ include 'includes/header.php';
                   <button onclick="toggleWishlist(<?php echo $product['id']; ?>)"><i class="fas fa-heart"></i></button>
                 </div>
                 <?php if ($product['image']): ?>
-                  <img src="assets/images/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width:100%;height:200px;object-fit:cover;">
-                <?php else: ?>
-                  <i class="fas fa-box"></i>
-                <?php endif; ?>
+                            <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width:100%;height:200px;object-fit:cover;" />
+                        <?php else: ?>
+                            <i class="fas fa-box"></i>
+                        <?php endif; ?>
               </div>
               <div class="product-info">
                 <div class="product-category"><?php echo htmlspecialchars($product['category_name'] ?? 'Category'); ?></div>

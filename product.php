@@ -242,7 +242,7 @@ include 'includes/header.php';
                             <button onclick="toggleWishlist(<?php echo $p['id']; ?>)"><i class="fas fa-heart"></i></button>
                         </div>
                         <?php if ($p['image']): ?>
-                            <img src="assets/images/<?php echo htmlspecialchars($p['image']); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" style="width:100%;height:200px;object-fit:cover;" />
+                            <img src="<?php echo htmlspecialchars($p['image']); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" style="width:100%;height:200px;object-fit:cover;" />
                         <?php else: ?>
                             <i class="fas fa-box"></i>
                         <?php endif; ?>
