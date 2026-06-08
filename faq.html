@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ - LuxuryStore</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .faq-item {
+        background: var(--bg-primary);
+        border-radius: var(--radius-md);
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+      }
+      .faq-question {
+        padding: 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .faq-answer {
+        padding: 0 1.5rem 1.5rem;
+        color: var(--text-secondary);
+        display: none;
+      }
+      .faq-item.active .faq-answer {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <!-- FAQ Content -->
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <h2>Frequently Asked Questions</h2>
+          <p>Find answers to common questions</p>
+        </div>
+        <div class="faq-container">
+          <div class="faq-item active">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              How do I track my order?
+              <i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              Once your order has shipped, you'll receive an email with a
+              tracking number and link to track your package.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              What is your return policy?
+              <i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              We offer a 30-day return policy for all unused items in their
+              original packaging.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              How long does shipping take?
+              <i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              Standard shipping takes 5-7 business days. Express shipping is
+              available for 2-3 day delivery.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              Do you ship internationally?
+              <i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              Yes! We ship to over 50 countries worldwide. Shipping rates and
+              times vary by location.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              How can I contact customer support?
+              <i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              You can reach our support team via email at
+              support@luxurystore.com or by phone at +1 (555) 123-4567.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+      function toggleFAQ(element) {
+        const item = element.parentElement;
+        item.classList.toggle("active");
+        const icon = element.querySelector("i");
+        if (item.classList.contains("active")) {
+          icon.classList.replace("fa-plus", "fa-minus");
+        } else {
+          icon.classList.replace("fa-minus", "fa-plus");
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Details - LuxuryStore</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      .account-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+      }
+      .account-sidebar {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        height: fit-content;
+      }
+      .account-menu {
+        list-style: none;
+      }
+      .account-menu li {
+        margin-bottom: 0.5rem;
+      }
+      .account-menu a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.2s;
+      }
+      .account-menu a:hover,
+      .account-menu a.active {
+        background: var(--primary-color);
+        color: white;
+      }
+      .account-content {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+      }
+      .order-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .order-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .order-item:last-child {
+        border-bottom: none;
+      }
+      .order-item-image {
+        width: 80px;
+        height: 80px;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--text-muted);
+      }
+      .order-summary {
+        background: var(--bg-secondary);
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+      }
+      .summary-row.total {
+        font-size: 1.25rem;
+        font-weight: 700;
+        border-top: 1px solid var(--border-color);
+        padding-top: 0.75rem;
+      }
+      @media (max-width: 768px) {
+        .account-layout {
+          grid-template-columns: 1fr;
+        }
+        .account-sidebar {
+          position: sticky;
+          top: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <section>
+      <div class="container">
+        <h2 style="margin-bottom: 2rem">My Account</h2>
+        <div class="account-layout">
+          <aside class="account-sidebar">
+            <h3 style="margin-bottom: 1rem">Account Menu</h3>
+            <ul class="account-menu">
+              <li>
+                <a href="dashboard.html"
+                  ><i class="fas fa-chart-bar"></i> Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="orders.html" class="active"
+                  ><i class="fas fa-box"></i> My Orders</a
+                >
+              </li>
+              <li>
+                <a href="profile.html"
+                  ><i class="fas fa-user"></i> Profile Settings</a
+                >
+              </li>
+              <li>
+                <a href="addresses.html"
+                  ><i class="fas fa-home"></i> Saved Addresses</a
+                >
+              </li>
+              <li>
+                <a href="../wishlist.html"
+                  ><i class="fas fa-heart"></i> Wishlist</a
+                >
+              </li>
+            </ul>
+          </aside>
+
+          <main class="account-content">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+              "
+            >
+              <h3>Order #12345</h3>
+              <span
+                style="
+                  background: #d1fae5;
+                  color: #065f46;
+                  padding: 0.5rem 1rem;
+                  border-radius: var(--radius-md);
+                  font-weight: 500;
+                "
+                >Delivered</span
+              >
+            </div>
+
+            <div class="order-section">
+              <h4 style="margin-bottom: 1rem">Order Information</h4>
+              <p style="margin-bottom: 0.5rem">
+                <strong>Date:</strong> June 5, 2024
+              </p>
+              <p style="margin-bottom: 0.5rem">
+                <strong>Payment Method:</strong> Credit Card
+              </p>
+              <p><strong>Delivery Method:</strong> Standard Shipping</p>
+            </div>
+
+            <div class="order-section">
+              <h4 style="margin-bottom: 1rem">Items</h4>
+              <div class="order-item">
+                <div class="order-item-image"><i class="fas fa-watch"></i></div>
+                <div style="flex: 1">
+                  <h5 style="margin-bottom: 0.25rem">Premium Smart Watch</h5>
+                  <p style="color: var(--text-secondary); font-size: 0.875rem">
+                    Qty: 1
+                  </p>
+                </div>
+                <div style="text-align: right">
+                  <p style="font-weight: 600">$299.00</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-section">
+              <h4 style="margin-bottom: 1rem">Shipping Address</h4>
+              <p>John Doe</p>
+              <p>123 Main St</p>
+              <p>New York, NY 10001</p>
+              <p>United States</p>
+            </div>
+
+            <div class="order-summary">
+              <h4 style="margin-bottom: 1rem">Order Summary</h4>
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span>$299.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping</span>
+                <span>Free</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total</span>
+                <span>$299.00</span>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="../components/navbar.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../assets/js/app.js"></script>
+  </body>
+</html>

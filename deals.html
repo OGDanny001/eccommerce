@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deals & Offers - LuxuryStore</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <!-- Deals Header -->
+    <section
+      style="
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+      "
+    >
+      <div class="container" style="text-align: center; padding: 4rem 0">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem">
+          <i class="fas fa-fire"></i> Hot Deals & Offers
+        </h1>
+        <p style="font-size: 1.25rem; opacity: 0.95">
+          Don't miss out on our limited time discounts!
+        </p>
+      </div>
+    </section>
+
+    <!-- Deals Content -->
+    <section style="background: var(--bg-primary)">
+      <div class="container">
+        <div class="section-header">
+          <h2>Flash Sale</h2>
+          <p>Ending soon!</p>
+        </div>
+        <div class="product-grid" id="deals-grid"></div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const dealsProducts = [
+          {
+            id: 1,
+            name: "Premium Watch",
+            category: "Accessories",
+            price: 299,
+            oldPrice: 429,
+            badge: "30% OFF",
+            icon: "watch",
+          },
+          {
+            id: 2,
+            name: "Wireless Headphones",
+            category: "Electronics",
+            price: 199,
+            oldPrice: 265,
+            badge: "25% OFF",
+            icon: "headphones",
+          },
+          {
+            id: 3,
+            name: "Designer Sunglasses",
+            category: "Accessories",
+            price: 89,
+            oldPrice: 149,
+            badge: "40% OFF",
+            icon: "sunglasses",
+          },
+          {
+            id: 4,
+            name: "Smart Backpack",
+            category: "Bags",
+            price: 149,
+            oldPrice: 186,
+            badge: "20% OFF",
+            icon: "backpack",
+          },
+        ];
+        document.getElementById("deals-grid").innerHTML = dealsProducts
+          .map((product) => renderProductCard(product))
+          .join("");
+      });
+    </script>
+  </body>
+</html>

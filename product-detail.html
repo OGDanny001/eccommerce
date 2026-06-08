@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details - LuxuryStore</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      .product-detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+      .product-gallery {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10rem;
+        box-shadow: var(--shadow-sm);
+        color: var(--text-muted);
+      }
+      .qty-selector {
+        display: flex;
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+      .qty-input {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+      }
+      .qty-input button {
+        padding: 0.75rem 1rem;
+        border: none;
+        background: var(--bg-secondary);
+        cursor: pointer;
+      }
+      .qty-input input {
+        border: none;
+        width: 60px;
+        text-align: center;
+      }
+      .product-tabs {
+        margin-top: 3rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .tab-buttons {
+        display: flex;
+        gap: 2rem;
+      }
+      .tab-btn {
+        padding: 1rem 0;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-secondary);
+        border-bottom: 3px solid transparent;
+      }
+      .tab-btn.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+      }
+      .tab-content {
+        padding: 2rem 0;
+      }
+      @media (max-width: 768px) {
+        .product-detail-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <!-- Product Detail -->
+    <section>
+      <div class="container">
+        <div class="product-detail-layout">
+          <div class="product-gallery">
+            <i class="fas fa-watch"></i>
+          </div>
+          <div class="product-info-section">
+            <p class="product-category">Accessories</p>
+            <h1 style="margin-bottom: 1rem">Premium Smart Watch</h1>
+            <div class="product-rating" style="margin-bottom: 1rem">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
+              <span style="color: var(--text-muted)">(128 reviews)</span>
+            </div>
+            <div class="product-price" style="margin-bottom: 1.5rem">
+              <span class="price-current" style="font-size: 2rem">$299</span>
+              <span class="price-old" style="font-size: 1.25rem">$399</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem">
+              Experience the future of wearable technology with our premium
+              smart watch. Featuring advanced health monitoring, GPS, and
+              seamless integration with your smartphone.
+            </p>
+            <div class="qty-selector">
+              <div class="qty-input">
+                <button onclick="changeQty(-1)">-</button>
+                <input type="number" id="qty-input" value="1" min="1" />
+                <button onclick="changeQty(1)">+</button>
+              </div>
+              <button
+                onclick="addToCartDetail()"
+                class="btn btn-primary btn-lg"
+                style="flex: 1"
+              >
+                Add to Cart
+              </button>
+              <button
+                onclick="toggleWishlist(1)"
+                class="btn btn-secondary btn-lg"
+                style="padding: 0 1.5rem"
+              >
+                <i class="fas fa-heart"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-tabs">
+          <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab(0)">
+              Description
+            </button>
+            <button class="tab-btn" onclick="switchTab(1)">
+              Specifications
+            </button>
+            <button class="tab-btn" onclick="switchTab(2)">
+              Reviews (128)
+            </button>
+          </div>
+        </div>
+        <div class="tab-content" id="tab-content">
+          <h3 style="margin-bottom: 1rem">Product Description</h3>
+          <p style="color: var(--text-secondary); line-height: 1.8">
+            Our premium smart watch combines elegant design with powerful
+            functionality. Track your fitness goals, monitor your health, and
+            stay connected with notifications right on your wrist. With a
+            long-lasting battery and water-resistant design, it's perfect for
+            everyday use.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Products -->
+    <section style="background: var(--bg-primary)">
+      <div class="container">
+        <div class="section-header">
+          <h2>Related Products</h2>
+          <p>You might also like</p>
+        </div>
+        <div class="product-grid" id="related-grid"></div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+      let currentQty = 1;
+      const product = {
+        id: 1,
+        name: "Premium Smart Watch",
+        category: "Accessories",
+        price: 299,
+        oldPrice: 399,
+        rating: 5,
+        ratingCount: 128,
+        icon: "watch",
+      };
+
+      const relatedProducts = [
+        {
+          id: 2,
+          name: "Wireless Headphones",
+          category: "Electronics",
+          price: 199,
+          icon: "headphones",
+        },
+        {
+          id: 3,
+          name: "Smart Backpack",
+          category: "Bags",
+          price: 149,
+          icon: "backpack",
+        },
+      ];
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("related-grid").innerHTML = relatedProducts
+          .map((p) => renderProductCard(p))
+          .join("");
+      });
+
+      function changeQty(delta) {
+        currentQty = Math.max(1, currentQty + delta);
+        document.getElementById("qty-input").value = currentQty;
+      }
+
+      function addToCartDetail() {
+        addToCart(product.id, currentQty);
+      }
+
+      function switchTab(tabIndex) {
+        const btns = document.querySelectorAll(".tab-btn");
+        btns.forEach((btn, i) => {
+          btn.classList.toggle("active", i === tabIndex);
+        });
+        const content = document.getElementById("tab-content");
+        if (tabIndex === 0) {
+          content.innerHTML = `
+            <h3 style="margin-bottom: 1rem;">Product Description</h3>
+            <p style="color: var(--text-secondary); line-height: 1.8;">Our premium smart watch combines elegant design with powerful functionality. Track your fitness goals, monitor your health, and stay connected with notifications right on your wrist. With a long-lasting battery and water-resistant design, it's perfect for everyday use.</p>
+          `;
+        } else if (tabIndex === 1) {
+          content.innerHTML = `
+            <h3 style="margin-bottom: 1rem;">Specifications</h3>
+            <ul style="color: var(--text-secondary); line-height: 2;">
+              <li>Display: 1.4" AMOLED</li>
+              <li>Battery: Up to 7 days</li>
+              <li>Water Resistant: 50m</li>
+              <li>Connectivity: Bluetooth 5.0</li>
+            </ul>
+          `;
+        } else {
+          content.innerHTML = `
+            <h3 style="margin-bottom: 1rem;">Reviews (128)</h3>
+            <p style="color: var(--text-secondary);">Customer reviews coming soon!</p>
+          `;
+        }
+      }
+    </script>
+  </body>
+</html>

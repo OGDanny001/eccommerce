@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - LuxuryStore</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      .admin-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      .admin-sidebar {
+        background: #111827;
+        color: white;
+        padding: 2rem 1.5rem;
+      }
+      .admin-sidebar h2 {
+        margin-bottom: 2rem;
+        color: white;
+      }
+      .admin-menu {
+        list-style: none;
+      }
+      .admin-menu li {
+        margin-bottom: 0.5rem;
+      }
+      .admin-menu a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        color: #d1d5db;
+        transition: all 0.2s;
+      }
+      .admin-menu a:hover,
+      .admin-menu a.active {
+        background: #1f2937;
+        color: white;
+      }
+      .admin-content {
+        padding: 2rem;
+        background: var(--bg-secondary);
+      }
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .stat-card {
+        background: var(--bg-primary);
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+      }
+      .stat-card h4 {
+        font-size: 2.25rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+      }
+      .stat-card p {
+        color: var(--text-secondary);
+      }
+      .admin-card {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+      }
+      @media (max-width: 1024px) {
+        .admin-layout {
+          grid-template-columns: 1fr;
+        }
+        .admin-sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <h2>LuxuryStore Admin</h2>
+        <ul class="admin-menu">
+          <li>
+            <a href="dashboard.html" class="active"
+              ><i class="fas fa-chart-bar"></i> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="products.html"
+              ><i class="fas fa-box"></i> Products</a
+            >
+          </li>
+          <li>
+            <a href="categories.html"
+              ><i class="fas fa-folder"></i> Categories</a
+            >
+          </li>
+          <li>
+            <a href="orders.html"
+              ><i class="fas fa-shopping-cart"></i> Orders</a
+            >
+          </li>
+          <li>
+            <a href="users.html"><i class="fas fa-users"></i> Users</a>
+          </li>
+          <li>
+            <a href="analytics.html"
+              ><i class="fas fa-chart-line"></i> Analytics</a
+            >
+          </li>
+          <li>
+            <a href="../index.html"
+              ><i class="fas fa-arrow-left"></i> Back to Store</a
+            >
+          </li>
+        </ul>
+      </aside>
+
+      <main class="admin-content">
+        <div class="admin-header">
+          <h1>Admin Dashboard</h1>
+          <div style="display: flex; align-items: center; gap: 1rem">
+            <span>Welcome, Admin!</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h4>$24,500</h4>
+            <p>Total Revenue (This Month)</p>
+          </div>
+          <div class="stat-card">
+            <h4>312</h4>
+            <p>Total Orders</p>
+          </div>
+          <div class="stat-card">
+            <h4>1,240</h4>
+            <p>Total Customers</p>
+          </div>
+          <div class="stat-card">
+            <h4>256</h4>
+            <p>Products in Stock</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h3 style="margin-bottom: 1.5rem">Recent Orders</h3>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--border-color)">
+                  <th
+                    style="
+                      text-align: left;
+                      padding: 1rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Order ID
+                  </th>
+                  <th
+                    style="
+                      text-align: left;
+                      padding: 1rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Customer
+                  </th>
+                  <th
+                    style="
+                      text-align: left;
+                      padding: 1rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Total
+                  </th>
+                  <th
+                    style="
+                      text-align: left;
+                      padding: 1rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Status
+                  </th>
+                  <th
+                    style="
+                      text-align: left;
+                      padding: 1rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid var(--border-color)">
+                  <td style="padding: 1rem">#12345</td>
+                  <td style="padding: 1rem">John Doe</td>
+                  <td style="padding: 1rem">$299.00</td>
+                  <td style="padding: 1rem">
+                    <span
+                      style="
+                        background: #d1fae5;
+                        color: #065f46;
+                        padding: 0.25rem 0.75rem;
+                        border-radius: var(--radius-sm);
+                        font-size: 0.875rem;
+                      "
+                      >Delivered</span
+                    >
+                  </td>
+                  <td style="padding: 1rem">Jun 5, 2024</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-color)">
+                  <td style="padding: 1rem">#12344</td>
+                  <td style="padding: 1rem">Jane Smith</td>
+                  <td style="padding: 1rem">$199.00</td>
+                  <td style="padding: 1rem">
+                    <span
+                      style="
+                        background: #dbeafe;
+                        color: #1e40af;
+                        padding: 0.25rem 0.75rem;
+                        border-radius: var(--radius-sm);
+                        font-size: 0.875rem;
+                      "
+                      >Shipped</span
+                    >
+                  </td>
+                  <td style="padding: 1rem">May 28, 2024</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/app.js"></script>
+  </body>
+</html>

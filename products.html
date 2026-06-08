@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Products - LuxuryStore</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <!-- Shop Content -->
+    <section>
+      <div class="container">
+        <div
+          class="shop-header"
+          style="
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+          "
+        >
+          <div>
+            <h2>All Products</h2>
+            <p style="color: var(--text-secondary)">
+              Showing <span id="productCount">8</span> products
+            </p>
+          </div>
+          <select
+            class="sort-select"
+            style="
+              padding: 0.5rem 1rem;
+              border: 1px solid var(--border-color);
+              border-radius: var(--radius-md);
+            "
+          >
+            <option>Sort by: Featured</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Newest First</option>
+            <option>Best Rated</option>
+          </select>
+        </div>
+
+        <div
+          class="shop-layout"
+          style="display: grid; grid-template-columns: 280px 1fr; gap: 2rem"
+        >
+          <!-- Filters Sidebar -->
+          <aside
+            class="filters"
+            style="
+              background: var(--bg-primary);
+              border-radius: var(--radius-lg);
+              padding: 1.5rem;
+              box-shadow: var(--shadow-sm);
+              height: fit-content;
+            "
+          >
+            <div class="filter-group">
+              <h4>Categories</h4>
+              <ul class="filter-options" style="list-style: none">
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="cat1" /><label for="cat1"
+                    >Clothing (128)</label
+                  >
+                </li>
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="cat2" /><label for="cat2"
+                    >Electronics (96)</label
+                  >
+                </li>
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="cat3" /><label for="cat3"
+                    >Jewelry (64)</label
+                  >
+                </li>
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="cat4" /><label for="cat4"
+                    >Home & Garden (156)</label
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="filter-group">
+              <h4>Price Range</h4>
+              <ul class="filter-options">
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="p1" /><label for="p1"
+                    >Under $50</label
+                  >
+                </li>
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="p2" /><label for="p2"
+                    >$50 - $100</label
+                  >
+                </li>
+                <li
+                  style="
+                    margin-bottom: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                  "
+                >
+                  <input type="checkbox" id="p3" /><label for="p3"
+                    >$100 - $200</label
+                  >
+                </li>
+              </ul>
+            </div>
+            <button class="btn btn-primary" style="width: 100%">
+              <i class="fas fa-filter"></i> Apply Filters
+            </button>
+          </aside>
+
+          <!-- Products Grid -->
+          <div>
+            <div class="product-grid" id="products-grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const grid = document.getElementById("products-grid");
+        grid.innerHTML = appState.products
+          .map((p) => renderProductCard(p))
+          .join("");
+        document.getElementById("productCount").textContent =
+          appState.products.length;
+      });
+    </script>
+  </body>
+</html>

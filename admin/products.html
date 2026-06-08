@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Products - LuxuryStore</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      .admin-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      .admin-sidebar {
+        background: #111827;
+        color: white;
+        padding: 2rem 1.5rem;
+      }
+      .admin-sidebar h2 {
+        margin-bottom: 2rem;
+        color: white;
+      }
+      .admin-menu {
+        list-style: none;
+      }
+      .admin-menu li {
+        margin-bottom: 0.5rem;
+      }
+      .admin-menu a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        color: #d1d5db;
+        transition: all 0.2s;
+      }
+      .admin-menu a:hover,
+      .admin-menu a.active {
+        background: #1f2937;
+        color: white;
+      }
+      .admin-content {
+        padding: 2rem;
+        background: var(--bg-secondary);
+      }
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      .admin-card {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+      }
+      .product-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .product-row:last-child {
+        border-bottom: none;
+      }
+      .product-image-small {
+        width: 60px;
+        height: 60px;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--text-muted);
+      }
+      @media (max-width: 1024px) {
+        .admin-layout {
+          grid-template-columns: 1fr;
+        }
+        .admin-sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <h2>LuxuryStore Admin</h2>
+        <ul class="admin-menu">
+          <li>
+            <a href="dashboard.html"
+              ><i class="fas fa-chart-bar"></i> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="products.html" class="active"
+              ><i class="fas fa-box"></i> Products</a
+            >
+          </li>
+          <li>
+            <a href="categories.html"
+              ><i class="fas fa-folder"></i> Categories</a
+            >
+          </li>
+          <li>
+            <a href="orders.html"
+              ><i class="fas fa-shopping-cart"></i> Orders</a
+            >
+          </li>
+          <li>
+            <a href="users.html"><i class="fas fa-users"></i> Users</a>
+          </li>
+          <li>
+            <a href="analytics.html"
+              ><i class="fas fa-chart-line"></i> Analytics</a
+            >
+          </li>
+          <li>
+            <a href="../index.html"
+              ><i class="fas fa-arrow-left"></i> Back to Store</a
+            >
+          </li>
+        </ul>
+      </aside>
+
+      <main class="admin-content">
+        <div class="admin-header">
+          <h1>Manage Products</h1>
+          <a href="add-product.html" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Product
+          </a>
+        </div>
+
+        <div class="admin-card">
+          <div class="product-row">
+            <div class="product-image-small"><i class="fas fa-watch"></i></div>
+            <div style="flex: 1">
+              <h4>Premium Smart Watch</h4>
+              <p style="color: var(--text-secondary)">$299.00</p>
+            </div>
+            <div>
+              <a href="edit-product.html" class="btn btn-sm">Edit</a>
+              <button class="btn btn-sm">Delete</button>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-image-small"><i class="fas fa-laptop"></i></div>
+            <div style="flex: 1">
+              <h4>Premium Laptop</h4>
+              <p style="color: var(--text-secondary)">$1299.00</p>
+            </div>
+            <div>
+              <a href="edit-product.html" class="btn btn-sm">Edit</a>
+              <button class="btn btn-sm">Delete</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/app.js"></script>
+  </body>
+</html>
