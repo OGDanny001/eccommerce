@@ -1,9 +1,25 @@
 <?php
-// Get product ID from URL parameter
-$productId = isset($_GET['id']) ? $_GET['id'] : 1;
+// Include database connection
+require 'config/db.php';
+
+// Get and sanitize product ID from URL parameter
+$productId = isset($_GET['id']) ? intval($_GET['id']) : 1;
+
+// Initialize product data
+$product = null;
+
+// Fetch product using prepared statement
+if ($conn) {
+    $stmt = $conn->prepare("SELECT id, name, description, price, image, category_id, stock FROM products WHERE id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result->fetch_assoc();
+    $stmt->close();
+}
 
 // Set page title
-$pageTitle = "Product Details";
+$pageTitle = $product ? htmlspecialchars($product['name']) : "Product Details";
 include 'includes/header.php';
 ?>
 
@@ -93,64 +109,96 @@ include 'includes/header.php';
 <!-- Product Detail -->
 <section>
     <div class="container">
-        <div class="product-detail-layout">
-            <div class="product-gallery">
-                <i class="fas fa-box"></i>
-            </div>
-            <div class="product-info-section">
-                <p class="product-category">Category</p>
-                <h1 style="margin-bottom: 1rem">Product Name</h1>
-                <div class="product-rating" style="margin-bottom: 1rem">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    <span style="color: var(--text-muted)">(0 reviews)</span>
+        <?php if ($product): ?>
+            <div class="product-detail-layout">
+                <div class="product-gallery">
+                    <?php if ($product['image']): ?>
+                        <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="max-width:100%; max-height:400px; object-fit:contain;" />
+                    <?php else: ?>
+                        <i class="fas fa-box"></i>
+                    <?php endif; ?>
                 </div>
-                <div class="product-price" style="margin-bottom: 1.5rem">
-                    <span class="price-current" style="font-size: 2rem">$0</span>
-                </div>
-                <p style="color: var(--text-secondary); margin-bottom: 2rem">
-                    Product description will be loaded here.
-                </p>
-                <div class="qty-selector">
-                    <div class="qty-input">
-                        <button onclick="changeQty(-1)">-</button>
-                        <input type="number" id="qty-input" value="1" min="1" />
-                        <button onclick="changeQty(1)">+</button>
+                <div class="product-info-section">
+                    <p class="product-category">
+                        <?php
+                        // Get category name
+                        $categoryName = "Category";
+                        if ($product['category_id']) {
+                            $stmt = $conn->prepare("SELECT name FROM categories WHERE id = ?");
+                            $stmt->bind_param("i", $product['category_id']);
+                            $stmt->execute();
+                            $catResult = $stmt->get_result();
+                            $category = $catResult->fetch_assoc();
+                            if ($category) $categoryName = $category['name'];
+                            $stmt->close();
+                        }
+                        echo htmlspecialchars($categoryName);
+                        ?>
+                    </p>
+                    <h1 style="margin-bottom: 1rem"><?php echo htmlspecialchars($product['name']); ?></h1>
+                    <div class="product-rating" style="margin-bottom: 1rem">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <span style="color: var(--text-muted)">(0 reviews)</span>
                     </div>
-                    <button
-                        onclick="addToCart(<?php echo $productId; ?>)"
-                        class="btn btn-primary btn-lg"
-                        style="flex: 1">
-                        Add to Cart
+                    <div class="product-price" style="margin-bottom: 1.5rem">
+                        <span class="price-current" style="font-size: 2rem">$<?php echo number_format($product['price'], 2); ?></span>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem">
+                        <?php echo htmlspecialchars($product['description']); ?>
+                    </p>
+                    <p style="color: <?php echo $product['stock'] > 0 ? 'var(--text-secondary)' : '#dc2626'; ?>; margin-bottom: 1rem;">
+                        Stock: <?php echo htmlspecialchars($product['stock']); ?>
+                    </p>
+                    <div class="qty-selector">
+                        <div class="qty-input">
+                            <button onclick="changeQty(-1)">-</button>
+                            <input type="number" id="qty-input" value="1" min="1" max="<?php echo $product['stock']; ?>" />
+                            <button onclick="changeQty(1)">+</button>
+                        </div>
+                        <button
+                            onclick="addToCart(<?php echo $product['id']; ?>)"
+                            class="btn btn-primary btn-lg"
+                            style="flex: 1"
+                            <?php echo $product['stock'] <= 0 ? 'disabled style="opacity:0.5; cursor:not-allowed; flex:1"' : ''; ?>>
+                            <?php echo $product['stock'] > 0 ? 'Add to Cart' : 'Out of Stock'; ?>
+                        </button>
+                        <button
+                            onclick="toggleWishlist(<?php echo $product['id']; ?>)"
+                            class="btn btn-secondary btn-lg"
+                            style="padding: 0 1.5rem">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab(0)">
+                        Description
                     </button>
-                    <button
-                        onclick="toggleWishlist(<?php echo $productId; ?>)"
-                        class="btn btn-secondary btn-lg"
-                        style="padding: 0 1.5rem">
-                        <i class="fas fa-heart"></i>
+                    <button class="tab-btn" onclick="switchTab(1)">
+                        Specifications
+                    </button>
+                    <button class="tab-btn" onclick="switchTab(2)">
+                        Reviews (0)
                     </button>
                 </div>
             </div>
-        </div>
-
-        <div class="product-tabs">
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchTab(0)">
-                    Description
-                </button>
-                <button class="tab-btn" onclick="switchTab(1)">
-                    Specifications
-                </button>
-                <button class="tab-btn" onclick="switchTab(2)">
-                    Reviews (0)
-                </button>
+            <div class="tab-content" id="tab-content">
+                <h3 style="margin-bottom: 1rem">Product Description</h3>
+                <p style="color: var(--text-secondary); line-height: 1.8">
+                    <?php echo htmlspecialchars($product['description']); ?>
+                </p>
             </div>
-        </div>
-        <div class="tab-content" id="tab-content">
-            <h3 style="margin-bottom: 1rem">Product Description</h3>
-            <p style="color: var(--text-secondary); line-height: 1.8">
-                Placeholder for product description.
-            </p>
-        </div>
+        <?php else: ?>
+            <div style="text-align: center; padding: 4rem 0;">
+                <i class="fas fa-exclamation-circle" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <h2 style="margin-bottom: 1rem;">Product Not Found</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">The product you are looking for does not exist.</p>
+                <a href="index.php" class="btn btn-primary">Back to Home</a>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -169,9 +217,11 @@ include 'includes/header.php';
 
 <script>
     let currentQty = 1;
+    const productId = <?php echo $productId; ?>;
 
     function changeQty(delta) {
-        currentQty = Math.max(1, currentQty + delta);
+        const maxQty = <?php echo $product ? $product['stock'] : 1; ?>;
+        currentQty = Math.max(1, Math.min(maxQty, currentQty + delta));
         document.getElementById("qty-input").value = currentQty;
     }
 
@@ -184,7 +234,7 @@ include 'includes/header.php';
         if (tabIndex === 0) {
             content.innerHTML = `
             <h3 style="margin-bottom: 1rem;">Product Description</h3>
-            <p style="color: var(--text-secondary); line-height: 1.8;">Placeholder for product description.</p>
+            <p style="color: var(--text-secondary); line-height: 1.8;"><?php echo $product ? addslashes($product['description']) : ''; ?></p>
           `;
         } else if (tabIndex === 1) {
             content.innerHTML = `
