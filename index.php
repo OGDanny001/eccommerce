@@ -1,21 +1,7 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LuxuryStore - Premium Shopping</title>
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div id="navbar-container"></div>
+<?php
+$pageTitle = "LuxuryStore - Premium Shopping";
+include 'includes/header.php';
+?>
 
     <!-- Hero Slider -->
     <section class="hero">
@@ -107,11 +93,8 @@
       </div>
     </section>
 
-    <div id="footer-container"></div>
+<?php include 'includes/footer.php'; ?>
 
-    <script src="components/navbar.js"></script>
-    <script src="components/footer.js"></script>
-    <script src="assets/js/app.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const featuredGrid = document.getElementById("featured-grid");
@@ -131,5 +114,3 @@
         }
       });
     </script>
-  </body>
-</html>
