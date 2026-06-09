@@ -63,11 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newUserId = $conn->insert_id;
 
         // Auto-login the user
-        loginUser($newUserId, $name, $email);
-
-        // Redirect to dashboard
-        header('Location: /user/dashboard.php');
-        exit;
+            loginUser($newUserId, $name, $email);
+            
+            // Redirect to dashboard
+            header('Location: /php/user/dashboard.php');
+            exit;
       } else {
         $error = 'Something went wrong, please try again.';
       }

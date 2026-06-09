@@ -9,7 +9,7 @@ $message = isset($_GET['msg']) ? $_GET['msg'] : '';
 
 // Check if user is already logged in - if yes, redirect to dashboard
 if (isLoggedIn()) {
-  header('Location: /user/dashboard.php');
+  header('Location: /php/user/dashboard.php');
   exit;
 }
 
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         loginUser($user['id'], $user['name'], $user['email']);
 
         // Redirect to user dashboard
-        header('Location: /user/dashboard.php');
+        header('Location: /php/user/dashboard.php');
         exit;
       } else {
         $error = 'Invalid email or password';

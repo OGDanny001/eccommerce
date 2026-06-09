@@ -4,139 +4,138 @@ require 'includes/auth.php';
 
 // Check if user is not logged in - if yes, show message and redirect
 if (!isLoggedIn()) {
-    // Store a temporary message to show on login page
-    // Or just redirect with a query string
-    header('Location: login.php?msg=Please login or create an account to continue checkout.');
-    exit;
+  // Store a temporary message to show on login page
+  // Or just redirect with a query string
+  header('Location: /php/login.php?msg=Please login or create an account to continue checkout.');
+  exit;
 }
 
 $pageTitle = "Checkout - LuxuryStore";
 include 'includes/header.php';
 ?>
 
-    <!-- Checkout -->
-    <section>
-      <div class="container">
-        <h2 style="margin-bottom: 2rem">Checkout</h2>
-        <div class="checkout-layout">
-          <div class="checkout-form">
-            <h3 style="margin-bottom: 1.5rem">Shipping Information</h3>
-            <form id="checkout-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label>First Name</label>
-                  <input type="text" placeholder="John" required />
-                </div>
-                <div class="form-group">
-                  <label>Last Name</label>
-                  <input type="text" placeholder="Doe" required />
-                </div>
-              </div>
-              <div class="form-group">
-                <label>Email</label>
-                <input type="email" placeholder="john@example.com" required value="<?php echo htmlspecialchars(getCurrentUser()['email']); ?>" />
-              </div>
-              <div class="form-group">
-                <label>Phone</label>
-                <input type="tel" placeholder="+1 (555) 123-4567" required />
-              </div>
-              <div class="form-group">
-                <label>Address</label>
-                <input type="text" placeholder="123 Main St" required />
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>City</label>
-                  <input type="text" placeholder="New York" required />
-                </div>
-                <div class="form-group">
-                  <label>State</label>
-                  <input type="text" placeholder="NY" required />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>ZIP Code</label>
-                  <input type="text" placeholder="10001" required />
-                </div>
-                <div class="form-group">
-                  <label>Country</label>
-                  <select>
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>United Kingdom</option>
-                  </select>
-                </div>
-              </div>
+<!-- Checkout -->
+<section>
+  <div class="container">
+    <h2 style="margin-bottom: 2rem">Checkout</h2>
+    <div class="checkout-layout">
+      <div class="checkout-form">
+        <h3 style="margin-bottom: 1.5rem">Shipping Information</h3>
+        <form id="checkout-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Doe" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="john@example.com" required value="<?php echo htmlspecialchars(getCurrentUser()['email']); ?>" />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" placeholder="+1 (555) 123-4567" required />
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" placeholder="123 Main St" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" placeholder="New York" required />
+            </div>
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" placeholder="NY" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ZIP Code</label>
+              <input type="text" placeholder="10001" required />
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <select>
+                <option>United States</option>
+                <option>Canada</option>
+                <option>United Kingdom</option>
+              </select>
+            </div>
+          </div>
 
-              <h3 style="margin: 2rem 0 1.5rem">Payment Information</h3>
-              <div class="form-group">
-                <label>Card Number</label>
-                <input type="text" placeholder="1234 5678 9012 3456" required />
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Expiry Date</label>
-                  <input type="text" placeholder="MM/YY" required />
-                </div>
-                <div class="form-group">
-                  <label>CVV</label>
-                  <input type="text" placeholder="123" required />
-                </div>
-              </div>
+          <h3 style="margin: 2rem 0 1.5rem">Payment Information</h3>
+          <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" placeholder="1234 5678 9012 3456" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Expiry Date</label>
+              <input type="text" placeholder="MM/YY" required />
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" placeholder="123" required />
+            </div>
+          </div>
 
-              <button
-                type="button"
-                onclick="
+          <button
+            type="button"
+            onclick="
                   if (validateForm('checkout-form'))
                     showNotification('Order placed successfully!');
                 "
-                class="btn btn-primary btn-lg"
-                style="width: 100%; margin-top: 1.5rem"
-              >
-                Place Order
-              </button>
-            </form>
-          </div>
+            class="btn btn-primary btn-lg"
+            style="width: 100%; margin-top: 1.5rem">
+            Place Order
+          </button>
+        </form>
+      </div>
 
-          <div>
-            <div class="order-summary" id="order-summary">
-              <!-- Summary will be loaded from app.js -->
-            </div>
-          </div>
+      <div>
+        <div class="order-summary" id="order-summary">
+          <!-- Summary will be loaded from app.js -->
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
 <?php include 'includes/footer.php'; ?>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const summary = document.getElementById("order-summary");
-        if (appState.cart.length === 0) {
-          summary.innerHTML = `
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const summary = document.getElementById("order-summary");
+    if (appState.cart.length === 0) {
+      summary.innerHTML = `
             <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
             <p style="color: var(--text-secondary);">Your cart is empty</p>
             <a href="products.php" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Continue Shopping</a>
           `;
-          return;
-        }
+      return;
+    }
 
-        let itemsHtml = "";
-        let subtotal = 0;
-        appState.cart.forEach((item) => {
-          subtotal += item.price * item.quantity;
-          itemsHtml += `
+    let itemsHtml = "";
+    let subtotal = 0;
+    appState.cart.forEach((item) => {
+      subtotal += item.price * item.quantity;
+      itemsHtml += `
             <div class="summary-item">
               <span>${item.name} x${item.quantity}</span>
               <span>$${(item.price * item.quantity).toFixed(2)}</span>
             </div>
           `;
-        });
+    });
 
-        const shipping = subtotal > 100 ? 0 : 9.99;
-        const total = subtotal + shipping;
+    const shipping = subtotal > 100 ? 0 : 9.99;
+    const total = subtotal + shipping;
 
-        summary.innerHTML = `
+    summary.innerHTML = `
           <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
           ${itemsHtml}
           <div class="summary-item">
@@ -152,5 +151,5 @@ include 'includes/header.php';
             <span>$${total.toFixed(2)}</span>
           </div>
         `;
-      });
-    </script>
+  });
+</script>

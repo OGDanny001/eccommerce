@@ -4,17 +4,17 @@ function getNavbarHTML() {
     let accountLink = '';
     if (isLoggedIn) {
         accountLink = `
-            <a href="user/dashboard.php" class="btn btn-sm btn-outline">
+            <a href="/php/user/dashboard.php" class="btn btn-sm btn-outline">
                 <i class="fas fa-user"></i> ${currentUser.name}
             </a>
-            <a href="logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
+            <a href="/php/logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
                 Logout
             </a>
         `;
     } else {
         accountLink = `
-            <a href="login.php" class="btn btn-sm btn-outline">Login</a>
-            <a href="register.php" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;">Sign Up</a>
+            <a href="/php/login.php" class="btn btn-sm btn-outline">Login</a>
+            <a href="/php/register.php" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;">Sign Up</a>
         `;
     }
     
@@ -33,15 +33,15 @@ function getNavbarHTML() {
     <nav class="navbar">
         <div class="container">
             <div class="navbar-content">
-                <a href="index.php" class="logo">LuxuryStore</a>
+                <a href="/php/index.php" class="logo">LuxuryStore</a>
                 
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
-                    <li><a href="products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
-                    <li><a href="categories.html" class="${window.location.pathname.includes('categories.html') ? 'active' : ''}">Categories</a></li>
-                    <li><a href="deals.html" class="${window.location.pathname.includes('deals.html') ? 'active' : ''}">Deals</a></li>
-                    <li><a href="about.html" class="${window.location.pathname.includes('about.html') ? 'active' : ''}">About</a></li>
-                    <li><a href="contact.html" class="${window.location.pathname.includes('contact.html') ? 'active' : ''}">Contact</a></li>
+                    <li><a href="/php/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
+                    <li><a href="/php/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
+                    <li><a href="/php/categories.html" class="${window.location.pathname.includes('categories.html') ? 'active' : ''}">Categories</a></li>
+                    <li><a href="/php/deals.html" class="${window.location.pathname.includes('deals.html') ? 'active' : ''}">Deals</a></li>
+                    <li><a href="/php/about.html" class="${window.location.pathname.includes('about.html') ? 'active' : ''}">About</a></li>
+                    <li><a href="/php/contact.html" class="${window.location.pathname.includes('contact.html') ? 'active' : ''}">Contact</a></li>
                 </ul>
 
                 <div class="nav-actions">
@@ -49,11 +49,11 @@ function getNavbarHTML() {
                         <input type="text" id="searchInput" placeholder="Search products...">
                         <button id="searchBtn"><i class="fas fa-search"></i></button>
                     </div>
-                    <a href="wishlist.html" class="icon-btn">
+                    <a href="/php/wishlist.html" class="icon-btn">
                         <i class="fas fa-heart"></i>
                         <span class="badge wishlist-badge">0</span>
                     </a>
-                    <a href="cart.html" class="icon-btn">
+                    <a href="/php/cart.html" class="icon-btn">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="badge cart-badge">0</span>
                     </a>

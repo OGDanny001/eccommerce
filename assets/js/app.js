@@ -131,21 +131,21 @@ const slides = [
         subtitle: "For Modern Life",
         text: "Discover our collection of high-quality products designed with you in mind. Shop now and enjoy exclusive offers!",
         cta: "Shop Now",
-        ctaLink: "products.html"
+        ctaLink: "/php/products.php"
     },
     {
         title: "Summer Sale 2024",
         subtitle: "Up to 50% OFF",
         text: "Don't miss out on our biggest sale of the year! Limited time only.",
         cta: "View Deals",
-        ctaLink: "deals.html"
+        ctaLink: "/php/deals.html"
     },
     {
         title: "New Arrivals",
         subtitle: "Latest Trends",
         text: "Check out our brand new collection just in time for the season.",
         cta: "Explore Now",
-        ctaLink: "categories.html"
+        ctaLink: "/php/categories.html"
     }
 ];
 

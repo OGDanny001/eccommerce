@@ -6,6 +6,5 @@ require 'includes/auth.php';
 logoutUser();
 
 // Redirect to homepage
-header('Location: /index.php');
+header('Location: /php/index.php');
 exit;
-?>
