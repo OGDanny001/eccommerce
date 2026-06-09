@@ -25,7 +25,7 @@ function isLoggedIn()
 function requireLogin()
 {
     if (!isLoggedIn()) {
-        header('Location: /login.php');
+        header('Location: /php/login.php');
         exit; // Always exit after header redirect to stop script execution
     }
 }
