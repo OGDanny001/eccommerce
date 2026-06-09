@@ -1,4 +1,24 @@
-const navbarHTML = `
+function getNavbarHTML() {
+    const isLoggedIn = currentUser !== null;
+    
+    let accountLink = '';
+    if (isLoggedIn) {
+        accountLink = `
+            <a href="user/dashboard.php" class="btn btn-sm btn-outline">
+                <i class="fas fa-user"></i> ${currentUser.name}
+            </a>
+            <a href="logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
+                Logout
+            </a>
+        `;
+    } else {
+        accountLink = `
+            <a href="login.php" class="btn btn-sm btn-outline">Login</a>
+            <a href="register.php" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;">Sign Up</a>
+        `;
+    }
+    
+    return `
     <!-- Top Navbar -->
     <div class="navbar-top">
         <div class="container">
@@ -37,16 +57,17 @@ const navbarHTML = `
                         <i class="fas fa-shopping-cart"></i>
                         <span class="badge cart-badge">0</span>
                     </a>
-                    <a href="user/dashboard.html" class="btn btn-sm btn-outline">My Account</a>
+                    ${accountLink}
                     <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
                 </div>
             </div>
         </div>
     </nav>
 `;
+}
 
 function renderNavbar() {
-    document.getElementById('navbar-container').innerHTML = navbarHTML;
+    document.getElementById('navbar-container').innerHTML = getNavbarHTML();
     
     // Mobile menu toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');

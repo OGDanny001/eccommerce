@@ -1,3 +1,10 @@
+<?php
+// Include auth functions to check login status
+require_once __DIR__ . '/auth.php';
+
+// Get current user if logged in
+$currentUser = isLoggedIn() ? getCurrentUser() : null;
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -6,13 +13,17 @@
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - LuxuryStore' : 'LuxuryStore - Premium Shopping'; ?></title>
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+    <script>
+        // Pass user information to JavaScript
+        const currentUser = <?php echo $currentUser ? json_encode($currentUser) : 'null'; ?>;
+    </script>
   </head>
   <body>
     <div id="navbar-container"></div>
