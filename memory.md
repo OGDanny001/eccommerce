@@ -36,6 +36,7 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - ✅ Phase 2.4: Product image enhancement with real online sources
 - ✅ Phase 3A: Authentication system with sessions and personalization
 - ✅ Phase 3A.1: Authentication flow fixes, image fixes, checkout protection
+- ✅ Phase 3A.2: Fix path issues (all assets/links use /php prefix), fix session/DB user sync, add reset-users script, improve dashboard styling
 
 ## Working Features
 
