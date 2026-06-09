@@ -35,6 +35,7 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - ✅ Phase 2.3: Product catalog sync + frontend/database consistency audit
 - ✅ Phase 2.4: Product image enhancement with real online sources
 - ✅ Phase 3A: Authentication system with sessions and personalization
+- ✅ Phase 3A.1: Authentication flow fixes, image fixes, checkout protection
 
 ## Working Features
 
@@ -67,6 +68,11 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - Personalized navbar (shows username when logged in)
 - Personalized dashboard (welcomes user)
 - Profile page shows current user info
+- Auto-login after successful registration
+- Login redirects to /user/dashboard.php
+- Checkout protected (guests redirected to login with message)
+- Cart images use product images from database
+- All product links use .php files
 
 ## Database Structure
 

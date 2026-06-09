@@ -219,7 +219,7 @@ function renderProductCard(product) {
                 <div class="product-actions" onclick="event.stopPropagation()">
                     <button onclick="toggleWishlist(${product.id})"><i class="fas fa-heart"></i></button>
                 </div>
-                <i class="fas fa-${product.icon}"></i>
+                ${product.image ? `<img src="${product.image}" alt="${product.name}" style="width:100%;height:200px;object-fit:cover;">` : `<i class="fas fa-${product.icon}"></i>`}
             </div>
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
@@ -270,7 +270,7 @@ function renderCart() {
                 <i class="fas fa-shopping-cart" style="font-size:5rem;color:var(--text-muted);margin-bottom:1.5rem;"></i>
                 <h3>Your cart is empty</h3>
                 <p style="color:var(--text-secondary);margin-bottom:2rem;">Add some products to your cart!</p>
-                <a href="products.html" class="btn btn-primary">Continue Shopping</a>
+                <a href="products.php" class="btn btn-primary">Continue Shopping</a>
             </div>
         `;
         summaryContainer.style.display = 'none';
@@ -281,7 +281,9 @@ function renderCart() {
     
     itemsContainer.innerHTML = appState.cart.map(item => `
         <div class="cart-item">
-            <div class="cart-item-image"><i class="fas fa-${item.icon}"></i></div>
+            <div class="cart-item-image">
+                ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;">` : `<i class="fas fa-${item.icon}"></i>`}
+            </div>
             <div class="cart-item-details">
                 <h4 style="margin-bottom:0.5rem;">${item.name}</h4>
                 <p style="color:var(--text-secondary);margin-bottom:1rem;">$${item.price}</p>
@@ -318,10 +320,10 @@ function renderCart() {
             <span>Total</span>
             <span>$${total.toFixed(2)}</span>
         </div>
-        <a href="checkout.html" class="btn btn-primary" style="width:100%;margin-top:1.5rem;">
+        <a href="checkout.php" class="btn btn-primary" style="width:100%;margin-top:1.5rem;">
             <i class="fas fa-credit-card"></i> Proceed to Checkout
         </a>
-        <a href="products.html" class="btn btn-secondary" style="width:100%;margin-top:1rem;">
+        <a href="products.php" class="btn btn-secondary" style="width:100%;margin-top:1rem;">
             <i class="fas fa-shopping-bag"></i> Continue Shopping
         </a>
     `;

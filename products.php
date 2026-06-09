@@ -193,7 +193,8 @@ include 'includes/header.php';
     rating: 5,
     ratingCount: 10,
     badge: null,
-    icon: 'box'
+    icon: 'box',
+    image: p.image
   }));
 
   // Check for saved search query
