@@ -22,7 +22,9 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - ✅ Database-backed cart system (API driven)
 - ✅ Order management with Paystack integration
 - ✅ Dynamic shipping capture (Country/State/City/Phone APIs)
-- ✅ Full Admin Suite with isolated UI and high security
+- ✅ Full Admin Suite with isolated UI (strictly separated from customer dashboard)
+- ✅ Automatic Admin redirection: Admins are kept within the Management Suite
+- ✅ Premium Admin UI: Modern dark sidebar, high-contrast statistics cards, and professional typography
 - ✅ Admin Product CRUD (Add, Edit, Delete with DB sync)
 - ✅ Admin User & Order management systems
 - ✅ Real-time database synchronization for all admin actions
@@ -33,14 +35,16 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **Shopping**: Product browsing, detailed views, related products (all DB-driven)
 - **Cart**: Persistent database-backed cart (synced across devices)
 - **Checkout**: Paystack integration with dynamic shipping information capture
-- **Account**: Dashboard with order stats, full history, and profile management
+- **Account**: Dashboard with order stats, full history, and profile management (Strictly for customers)
 
-### **Admin Control (Isolated Interface)**
+### **Admin Control (Strictly Isolated)**
+- **Interface**: High-end management dashboard with zero customer-facing clutter
 - **Dashboard**: Real-time stats (Total Orders, Revenue, Customers, Products)
 - **Inventory**: Full CRUD management (Add/Edit/Delete products) with instant DB sync
 - **Orders**: View detailed order info and update statuses (Paid, Shipped, Delivered)
 - **Users**: Complete list of registered users and their details
-- **Security**: Strict `requireAdmin()` middleware on all admin routes
+- **Security**: Strict `requireAdmin()` middleware and automatic redirection from customer account pages
+
 
 ## Database Structure
 

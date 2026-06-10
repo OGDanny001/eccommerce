@@ -25,21 +25,25 @@ $latestOrders = $conn->query("SELECT * FROM orders ORDER BY created_at DESC LIMI
 ?>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-    <div class="admin-card" style="border-left: 4px solid #3b82f6;">
-        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Total Orders</div>
-        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;"><?php echo $totalOrders; ?></div>
+    <div class="admin-card">
+        <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fas fa-shopping-cart"></i></div>
+        <div style="color: #64748b; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Total Orders</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem; color: #1e293b;"><?php echo $totalOrders; ?></div>
     </div>
-    <div class="admin-card" style="border-left: 4px solid #10b981;">
-        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Total Revenue</div>
-        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;">$<?php echo number_format($totalRevenue, 2); ?></div>
+    <div class="admin-card">
+        <div class="stat-icon" style="background: #ecfdf5; color: #10b981;"><i class="fas fa-dollar-sign"></i></div>
+        <div style="color: #64748b; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Total Revenue</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem; color: #1e293b;">$<?php echo number_format($totalRevenue, 2); ?></div>
     </div>
-    <div class="admin-card" style="border-left: 4px solid #f59e0b;">
-        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Customers</div>
-        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;"><?php echo $totalUsers; ?></div>
+    <div class="admin-card">
+        <div class="stat-icon" style="background: #fff7ed; color: #f59e0b;"><i class="fas fa-users"></i></div>
+        <div style="color: #64748b; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Customers</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem; color: #1e293b;"><?php echo $totalUsers; ?></div>
     </div>
-    <div class="admin-card" style="border-left: 4px solid #8b5cf6;">
-        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Total Products</div>
-        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;"><?php echo $totalProducts; ?></div>
+    <div class="admin-card">
+        <div class="stat-icon" style="background: #f5f3ff; color: #8b5cf6;"><i class="fas fa-box"></i></div>
+        <div style="color: #64748b; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Total Products</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem; color: #1e293b;"><?php echo $totalProducts; ?></div>
     </div>
 </div>
 

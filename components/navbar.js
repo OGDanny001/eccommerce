@@ -4,7 +4,26 @@ function getNavbarHTML() {
     
     let accountLink = '';
     let navLinks = '';
-    if (isLoggedIn) {
+
+    if (isAdmin) {
+        // STRICT ADMIN NAVBAR
+        accountLink = `
+            <a href="/eccommerce/admin/index.php" class="btn btn-sm btn-outline">
+                <i class="fas fa-user-shield"></i> Admin: ${currentUser.name}
+            </a>
+            <a href="/eccommerce/logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
+                Logout
+            </a>
+        `;
+        navLinks = `
+            <li><a href="/eccommerce/admin/index.php" class="${window.location.pathname.includes('/admin/index.php') ? 'active' : ''}">Dashboard</a></li>
+            <li><a href="/eccommerce/admin/orders.php" class="${window.location.pathname.includes('/admin/orders.php') ? 'active' : ''}">Orders</a></li>
+            <li><a href="/eccommerce/admin/products.php" class="${window.location.pathname.includes('/admin/products.php') ? 'active' : ''}">Products</a></li>
+            <li><a href="/eccommerce/admin/users.php" class="${window.location.pathname.includes('/admin/users.php') ? 'active' : ''}">Users</a></li>
+            <li style="margin-left: 1rem;"><a href="/eccommerce/index.php" style="color: var(--primary-color); font-weight: 700;"><i class="fas fa-eye"></i> View Shop</a></li>
+        `;
+    } else if (isLoggedIn) {
+        // CUSTOMER NAVBAR
         accountLink = `
             <a href="/eccommerce/user/dashboard.php" class="btn btn-sm btn-outline">
                 <i class="fas fa-user"></i> Welcome, ${currentUser.name}
@@ -16,7 +35,6 @@ function getNavbarHTML() {
         navLinks = `
             <li><a href="/eccommerce/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
             <li><a href="/eccommerce/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
-            ${isAdmin ? '<li><a href="/eccommerce/admin/index.php" class="' + (window.location.pathname.includes('/admin/') ? 'active' : '') + '"><i class="fas fa-cog"></i> Admin</a></li>' : ''}
             <li><a href="/eccommerce/user/dashboard.php" class="${window.location.pathname.includes('dashboard.php') ? 'active' : ''}">Dashboard</a></li>
             <li><a href="/eccommerce/user/orders.php" class="${window.location.pathname.includes('orders.php') ? 'active' : ''}">Orders</a></li>
             <li><a href="/eccommerce/user/profile.php" class="${window.location.pathname.includes('profile.php') ? 'active' : ''}">Profile</a></li>

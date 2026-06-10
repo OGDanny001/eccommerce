@@ -6,6 +6,12 @@
 require '../includes/auth.php';
 requireLogin();
 
+// IF ADMIN, REDIRECT TO ADMIN DASHBOARD
+if (isAdmin()) {
+    header('Location: /eccommerce/admin/index.php');
+    exit;
+}
+
 // Get current user information
 $current_user = getCurrentUser();
 
