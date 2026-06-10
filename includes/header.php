@@ -1,4 +1,4 @@
-<?php
+j <?php
 // Include auth functions to check login status
 require_once __DIR__ . '/auth.php';
 
@@ -11,7 +11,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - LuxuryStore' : 'LuxuryStore - Premium Shopping'; ?></title>
-    <link rel="stylesheet" href="/php/assets/css/styles.css" />
+    <link rel="stylesheet" href="/eccommerce/assets/css/styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap"
       rel="stylesheet"

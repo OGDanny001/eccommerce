@@ -5,32 +5,32 @@ function getNavbarHTML() {
     let navLinks = '';
     if (isLoggedIn) {
         accountLink = `
-            <a href="/php/user/dashboard.php" class="btn btn-sm btn-outline">
+            <a href="/eccommerce/user/dashboard.php" class="btn btn-sm btn-outline">
                 <i class="fas fa-user"></i> Welcome, ${currentUser.name}
             </a>
-            <a href="/php/logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
+            <a href="/eccommerce/logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
                 Logout
             </a>
         `;
         navLinks = `
-            <li><a href="/php/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
-            <li><a href="/php/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
-            <li><a href="/php/user/dashboard.php" class="${window.location.pathname.includes('dashboard.php') ? 'active' : ''}">Dashboard</a></li>
-            <li><a href="/php/user/orders.php" class="${window.location.pathname.includes('orders.php') ? 'active' : ''}">Orders</a></li>
-            <li><a href="/php/user/profile.php" class="${window.location.pathname.includes('profile.php') ? 'active' : ''}">Profile</a></li>
+            <li><a href="/eccommerce/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
+            <li><a href="/eccommerce/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
+            <li><a href="/eccommerce/user/dashboard.php" class="${window.location.pathname.includes('dashboard.php') ? 'active' : ''}">Dashboard</a></li>
+            <li><a href="/eccommerce/user/orders.php" class="${window.location.pathname.includes('orders.php') ? 'active' : ''}">Orders</a></li>
+            <li><a href="/eccommerce/user/profile.php" class="${window.location.pathname.includes('profile.php') ? 'active' : ''}">Profile</a></li>
         `;
     } else {
         accountLink = `
-            <a href="/php/login.php" class="btn btn-sm btn-outline">Login</a>
-            <a href="/php/register.php" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;">Register</a>
+            <a href="/eccommerce/login.php" class="btn btn-sm btn-outline">Login</a>
+            <a href="/eccommerce/register.php" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;">Register</a>
         `;
         navLinks = `
-            <li><a href="/php/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
-            <li><a href="/php/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
-            <li><a href="/php/categories.html" class="${window.location.pathname.includes('categories.html') ? 'active' : ''}">Categories</a></li>
-            <li><a href="/php/deals.html" class="${window.location.pathname.includes('deals.html') ? 'active' : ''}">Deals</a></li>
-            <li><a href="/php/about.html" class="${window.location.pathname.includes('about.html') ? 'active' : ''}">About</a></li>
-            <li><a href="/php/contact.html" class="${window.location.pathname.includes('contact.html') ? 'active' : ''}">Contact</a></li>
+            <li><a href="/eccommerce/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
+            <li><a href="/eccommerce/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
+            <li><a href="/eccommerce/categories.html" class="${window.location.pathname.includes('categories.html') ? 'active' : ''}">Categories</a></li>
+            <li><a href="/eccommerce/deals.html" class="${window.location.pathname.includes('deals.html') ? 'active' : ''}">Deals</a></li>
+            <li><a href="/eccommerce/about.html" class="${window.location.pathname.includes('about.html') ? 'active' : ''}">About</a></li>
+            <li><a href="/eccommerce/contact.html" class="${window.location.pathname.includes('contact.html') ? 'active' : ''}">Contact</a></li>
         `;
     }
     
@@ -49,7 +49,7 @@ function getNavbarHTML() {
     <nav class="navbar">
         <div class="container">
             <div class="navbar-content">
-                <a href="/php/index.php" class="logo">LuxuryStore</a>
+                <a href="/eccommerce/index.php" class="logo">LuxuryStore</a>
                 
                 <ul class="nav-links" id="navLinks">
                     ${navLinks}
@@ -60,11 +60,11 @@ function getNavbarHTML() {
                         <input type="text" id="searchInput" placeholder="Search products...">
                         <button id="searchBtn"><i class="fas fa-search"></i></button>
                     </div>
-                    <a href="/php/wishlist.html" class="icon-btn">
+                    <a href="/eccommerce/wishlist.html" class="icon-btn">
                         <i class="fas fa-heart"></i>
                         <span class="badge wishlist-badge">0</span>
                     </a>
-                    <a href="/php/cart.html" class="icon-btn">
+                    <a href="/eccommerce/cart.html" class="icon-btn">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="badge cart-badge">0</span>
                     </a>

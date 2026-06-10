@@ -19,7 +19,7 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - ✅ Added Font Awesome icons (all emojis replaced)
 - ✅ Mobile hamburger menu working
 - ✅ Hero slider with auto-advance and controls
-- ✅ Full cart/wishlist functionality (localStorage)
+- ✅ Full cart/wishlist functionality (wishlist uses localStorage, cart now uses database)
 - ✅ Product search/filtering
 - ✅ Form validation functions
 - ✅ Improved CSS architecture with variables and reusable components
@@ -36,25 +36,29 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - ✅ Phase 2.4: Product image enhancement with real online sources
 - ✅ Phase 3A: Authentication system with sessions and personalization
 - ✅ Phase 3A.1: Authentication flow fixes, image fixes, checkout protection
-- ✅ Phase 3A.2: Fix path issues (all assets/links use /php prefix), fix session/DB user sync, add reset-users script, improve dashboard styling
+- ✅ Phase 3A.2: Fix path issues (all assets/links use /eccommerce prefix), fix session/DB user sync, add reset-users script, improve dashboard styling
+- ✅ Phase 3B: Database-backed cart system (API endpoints for add/remove/update/get cart items)
+- ✅ Phase 3C: Order management system (order creation, order history display on user dashboard and orders page
+- ✅ Phase 3D: Paystack payment gateway integration (checkout with payment verification)
 
 ## Working Features
 
 - Navigation (mobile + desktop)
 - Product browsing (all from database)
 - Product cards clickable and navigate to product.php?id=PRODUCT_ID
-- Add to cart/update/remove
-- Wishlist management
+- Add to cart/update/remove (database-backed, synced across devices for logged-in users)
+- Wishlist management (localStorage)
 - Search
 - Hero slider
 - Notifications/toasts
-- Account dashboard (user)
+- Account dashboard (user) with order stats and recent orders
+- User orders page with order history and details
 - Admin dashboard
 - Database connection
 - Product page with dynamic content from database (using JOIN with categories and prepared statements)
 - Product page handles edge cases (missing/invalid/not found IDs)
 - Full product catalog database-driven (15 sample products added)
-- API endpoint for fetching products
+- API endpoints for cart operations (/api/cart-add.php, /api/cart-remove.php, /api/cart-update.php, /api/cart-get.php, /api/order-create.php, /api/verify-payment.php)
 - No hardcoded products left in JS/HTML
 - Related products section on product detail page
 - All product links verified and working
@@ -74,6 +78,8 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - Checkout protected (guests redirected to login with message)
 - Cart images use product images from database
 - All product links use .php files
+- Paystack payment integration
+- Order history with order items and status
 
 ## Database Structure
 
@@ -104,9 +110,9 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 
 ## Still Missing (Backend)
 
-- Checkout system
 - Admin dashboards
-- Payment processing integration
+- Advanced order management (shipping, cancellation, etc.)
+- Address management for users
 
 ## Current System State
 
@@ -115,15 +121,17 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - Database schema created (database.sql) with sample data
 - Product page connected to database with JOIN and prepared statements
 - Product navigation system working correctly
-- Project relocated to htdocs/php/
+- Project in htdocs/eccommerce/
 - Full product catalog now database-driven
 - No hardcoded products left in frontend
 - Full consistency between database and frontend
-- Project backed up to GitHub
 - Authentication system fully implemented
 - Sessions working correctly
 - Protected pages accessible only when logged in
 - Personalization features active
+- Database-backed cart system implemented
+- Checkout and order management implemented
+- Paystack payment gateway integrated
 
 ## Next Planned Phase
 
@@ -142,15 +150,23 @@ Phase 3B: Checkout and order management
 │   ├── orders.html
 │   ├── users.html
 │   └── analytics.html
+├── api/                       # API endpoints
+│   ├── cart-add.php
+│   ├── cart-remove.php
+│   ├── cart-update.php
+│   ├── cart-get.php
+│   ├── order-create.php
+│   └── verify-payment.php
 ├── user/                      # User account pages
-│   ├── dashboard.html
-│   ├── orders.html
+│   ├── dashboard.php          # User dashboard with stats
+│   ├── orders.php             # Order history
 │   ├── order-detail.html
-│   ├── profile.html
-│   └── addresses.html
+│   ├── profile.php            # Profile settings
+│   └── addresses.php          # Address management
 ├── config/                    # Configuration
 │   └── db.php                 # Database connection
 ├── includes/                  # Reusable PHP components
+│   ├── auth.php               # Authentication helper
 │   ├── header.php
 │   └── footer.php
 ├── assets/
@@ -163,16 +179,17 @@ Phase 3B: Checkout and order management
 │   └── footer.js
 ├── database.sql               # Database schema
 ├── index.php                  # Home page
-├── products.html
+├── products.php               # Products page
 ├── categories.html
 ├── deals.html
 ├── product-detail.html
 ├── product.php                # Dynamic product page
 ├── cart.html
 ├── wishlist.html
-├── checkout.html
-├── login.html
-├── register.html
+├── checkout.php               # Checkout page with Paystack
+├── login.php                  # Login page
+├── register.php               # Register page
+├── logout.php                 # Logout script
 ├── forgot-password.html
 ├── reset-password.html
 ├── about.html
@@ -184,11 +201,21 @@ Phase 3B: Checkout and order management
 └── memory.md
 ```
 
+## Paystack Integration Setup
+
+To set up Paystack integration, follow these steps:
+
+1. Create a Paystack account at https://paystack.com/
+2. Get your API keys from the Paystack dashboard
+3. In /api/verify-payment.php, replace 'sk_test_your_secret_key_here' with your secret key
+4. In checkout.php, replace 'pk_test_your_public_key_here' with your public key
+5. Update the currency in checkout.php if needed (default is 'NGN')
+
 ## Future Development Notes
 
 1. Use a build tool (Vite/Webpack)
 2. Add a templating engine or framework (React/Vue) if scaling
-3. Connect to a real backend API
-4. Add real product images
-5. Implement user authentication with JWT
-6. Add complete checkout/payment integration (Stripe/PayPal)
+3. Implement admin dashboards
+4. Implement address management for users
+5. Add advanced order management (shipping, cancellation, refunds)
+6. Add more payment gateways

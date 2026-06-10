@@ -25,14 +25,14 @@ function isLoggedIn()
 function requireLogin()
 {
     if (!isLoggedIn()) {
-        header('Location: /php/login.php');
+        header('Location: /eccommerce/login.php');
         exit; // Always exit after header redirect to stop script execution
     }
     // Also check if user still exists in DB
     $user = getCurrentUser();
     if (!$user) {
         logoutUser();
-        header('Location: /php/login.php');
+        header('Location: /eccommerce/login.php');
         exit;
     }
 }

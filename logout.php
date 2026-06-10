@@ -6,5 +6,5 @@ require 'includes/auth.php';
 logoutUser();
 
 // Redirect to homepage
-header('Location: /php/index.php');
+header('Location: /eccommerce/index.php');
 exit;

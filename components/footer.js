@@ -16,28 +16,28 @@ const footerHTML = `
                 <div class="footer-col">
                     <h4>Quick Links</h4>
                     <ul class="footer-links">
-                        <li><a href="/products.html">Shop</a></li>
-                        <li><a href="/about.html">About Us</a></li>
-                        <li><a href="/contact.html">Contact</a></li>
-                        <li><a href="/faq.html">FAQ</a></li>
+                        <li><a href="/eccommerce/products.php">Shop</a></li>
+                        <li><a href="/eccommerce/about.html">About Us</a></li>
+                        <li><a href="/eccommerce/contact.html">Contact</a></li>
+                        <li><a href="/eccommerce/faq.html">FAQ</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Customer Service</h4>
-                    <ul class="footer-links">
-                        <li><a href="/privacy.html">Privacy Policy</a></li>
-                        <li><a href="/terms.html">Terms & Conditions</a></li>
-                        <li><a href="/cart.html">Cart</a></li>
-                        <li><a href="/wishlist.html">Wishlist</a></li>
+                    <ul>
+                        <li><a href="/eccommerce/privacy.html">Privacy Policy</a></li>
+                        <li><a href="/eccommerce/terms.html">Terms & Conditions</a></li>
+                        <li><a href="/eccommerce/cart.html">Cart</a></li>
+                        <li><a href="/eccommerce/wishlist.html">Wishlist</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>My Account</h4>
-                    <ul class="footer-links">
-                        <li><a href="/login.html">Login</a></li>
-                        <li><a href="/register.html">Register</a></li>
-                        <li><a href="/user/dashboard.html">Dashboard</a></li>
-                        <li><a href="/user/orders.html">Orders</a></li>
+                    <ul>
+                        <li><a href="/eccommerce/login.php">Login</a></li>
+                        <li><a href="/eccommerce/register.php">Register</a></li>
+                        <li><a href="/eccommerce/user/dashboard.php">Dashboard</a></li>
+                        <li><a href="/eccommerce/user/orders.php">Orders</a></li>
                     </ul>
                 </div>
             </div>

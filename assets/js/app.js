@@ -2,7 +2,7 @@
 // GLOBAL APP STATE
 // =============================================
 const appState = {
-    cart: JSON.parse(localStorage.getItem('cart')) || [],
+    cart: [],
     wishlist: JSON.parse(localStorage.getItem('wishlist')) || [],
     products: [], // Will be populated by PHP from database
     currentSliderIndex: 0
@@ -31,56 +31,84 @@ function updateBadges() {
 }
 
 // =============================================
-// CART FUNCTIONS
+// CART FUNCTIONS (DATABASE-BACKED)
 // =============================================
-function addToCart(productId, quantity = 1) {
-  // Find product in appState.products or create a minimal product if not found
-  let product = appState.products.find(p => p.id === productId);
-  if (!product) {
-    // Create minimal product if it's not in the main product list (for product detail page etc.)
-    product = { id: productId, name: 'Product', price: 0, icon: 'box' };
-    // Try to find product in wishlist or cart
-    const wishlistItem = appState.wishlist.find(p => p.id === productId);
-    if (wishlistItem) product = wishlistItem;
-    const cartItem = appState.cart.find(p => p.id === productId);
-    if (cartItem) product = cartItem;
-  }
-  
-  const existingItem = appState.cart.find(item => item.id === productId);
-  if (existingItem) {
-    existingItem.quantity += quantity;
-  } else {
-    appState.cart.push({ ...product, quantity });
-  }
-  saveCart();
-  updateBadges();
-  showNotification(`${product.name} added to cart!`);
-}
-
-function removeFromCart(productId) {
-    appState.cart = appState.cart.filter(item => item.id !== productId);
-    saveCart();
-    updateBadges();
-    if (document.getElementById('cart-items')) renderCart();
-    showNotification('Item removed from cart');
-}
-
-function updateQuantity(productId, change) {
-    const item = appState.cart.find(i => i.id === productId);
-    if (item) {
-        item.quantity += change;
-        if (item.quantity < 1) {
-            removeFromCart(productId);
-            return;
-        }
-        saveCart();
-        updateBadges();
-        renderCart();
+async function addToCart(productId, quantity = 1) {
+  try {
+    const response = await fetch('/eccommerce/api/cart-add.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `product_id=${productId}&quantity=${quantity}`
+    });
+    const data = await response.json();
+    if (data.success) {
+      await loadCart();
+      showNotification('Item added to cart!');
+    } else {
+      showNotification(data.message);
     }
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    showNotification('Error adding to cart');
+  }
 }
 
-function saveCart() {
-    localStorage.setItem('cart', JSON.stringify(appState.cart));
+async function removeFromCart(productId) {
+  try {
+    const response = await fetch('/eccommerce/api/cart-remove.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `product_id=${productId}`
+    });
+    const data = await response.json();
+    if (data.success) {
+      await loadCart();
+      if (document.getElementById('cart-items')) renderCart();
+      showNotification('Item removed from cart');
+    } else {
+      showNotification(data.message);
+    }
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    showNotification('Error removing from cart');
+  }
+}
+
+async function updateQuantity(productId, change) {
+  const item = appState.cart.find(i => i.product_id === productId);
+  if (item) {
+    const newQuantity = item.quantity + change;
+    try {
+      const response = await fetch('/eccommerce/api/cart-update.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `product_id=${productId}&quantity=${newQuantity}`
+      });
+      const data = await response.json();
+      if (data.success) {
+        await loadCart();
+        if (document.getElementById('cart-items')) renderCart();
+      } else {
+        showNotification(data.message);
+      }
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      showNotification('Error updating quantity');
+    }
+  }
+}
+
+async function loadCart() {
+  try {
+    const response = await fetch('/eccommerce/api/cart-get.php');
+    const data = await response.json();
+    if (data.success) {
+      appState.cart = data.cart;
+      updateBadges();
+    }
+  } catch (error) {
+    console.error('Error loading cart:', error);
+  }
 }
 
 // =============================================
@@ -131,21 +159,21 @@ const slides = [
         subtitle: "For Modern Life",
         text: "Discover our collection of high-quality products designed with you in mind. Shop now and enjoy exclusive offers!",
         cta: "Shop Now",
-        ctaLink: "/php/products.php"
+        ctaLink: "/eccommerce/products.php"
     },
     {
         title: "Summer Sale 2024",
         subtitle: "Up to 50% OFF",
         text: "Don't miss out on our biggest sale of the year! Limited time only.",
         cta: "View Deals",
-        ctaLink: "/php/deals.html"
+        ctaLink: "/eccommerce/deals.html"
     },
     {
         title: "New Arrivals",
         subtitle: "Latest Trends",
         text: "Check out our brand new collection just in time for the season.",
         cta: "Explore Now",
-        ctaLink: "/php/categories.html"
+        ctaLink: "/eccommerce/categories.html"
     }
 ];
 
@@ -282,20 +310,20 @@ function renderCart() {
     itemsContainer.innerHTML = appState.cart.map(item => `
         <div class="cart-item">
             <div class="cart-item-image">
-                ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;">` : `<i class="fas fa-${item.icon}"></i>`}
+                ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;">` : `<i class="fas fa-box"></i>`}
             </div>
             <div class="cart-item-details">
                 <h4 style="margin-bottom:0.5rem;">${item.name}</h4>
                 <p style="color:var(--text-secondary);margin-bottom:1rem;">$${item.price}</p>
                 <div class="qty-selector">
-                    <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)"><i class="fas fa-minus"></i></button>
+                    <button class="qty-btn" onclick="updateQuantity(${item.product_id}, -1)"><i class="fas fa-minus"></i></button>
                     <span style="padding:0 1rem;font-weight:600;">${item.quantity}</span>
-                    <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)"><i class="fas fa-plus"></i></button>
+                    <button class="qty-btn" onclick="updateQuantity(${item.product_id}, 1)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div style="text-align:right;">
                 <p style="font-weight:700;font-size:1.25rem;margin-bottom:1rem;">$${(item.price * item.quantity).toFixed(2)}</p>
-                <button onclick="removeFromCart(${item.id})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;">
+                <button onclick="removeFromCart(${item.product_id})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;">
                     <i class="fas fa-trash"></i> Remove
                 </button>
             </div>
@@ -413,7 +441,8 @@ function validateForm(formId) {
 // =============================================
 // INITIALIZE APP
 // =============================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadCart();
     updateBadges();
     renderSlider();
     initSearch();
@@ -421,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('wishlist-grid')) renderWishlist();
     if (document.getElementById('cart-items')) renderCart();
     
-    if (window.location.pathname.includes('products.html')) {
+    if (window.location.pathname.includes('products.php')) {
         const savedQuery = localStorage.getItem('searchQuery');
         if (savedQuery) {
             const searchInput = document.getElementById('searchInput');

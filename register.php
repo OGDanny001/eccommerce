@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             loginUser($newUserId, $name, $email);
             
             // Redirect to dashboard
-            header('Location: /php/user/dashboard.php');
+            header('Location: /eccommerce/user/dashboard.php');
             exit;
       } else {
         $error = 'Something went wrong, please try again.';
