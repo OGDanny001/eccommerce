@@ -159,7 +159,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
         if (data.success) {
             // Initialize Paystack
             const handler = PaystackPop.setup({
-                key: 'pk_test_your_public_key_here', // Replace with your Paystack public key
+                key: 'pk_test_0a97a5d545639b2f055c2c8b9041cdb0b32b027c', // Replace with your Paystack public key
                 email: data.email,
                 amount: data.amount,
                 currency: 'NGN', // Change to your currency

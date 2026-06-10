@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Verify payment with Paystack API
-    $paystack_secret_key = 'sk_test_your_secret_key_here'; // Replace with your secret key
+    $paystack_secret_key = 'sk_test_86b2fbf97b3e9913c3cd4165e48231367bc4aaf9'; // Replace with your secret key
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://api.paystack.co/transaction/verify/{$reference}");
