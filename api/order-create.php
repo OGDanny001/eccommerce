@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $state = $_POST['state'] ?? '';
     $city = $_POST['city'] ?? '';
     $zip_code = $_POST['zip_code'] ?? '';
+    $coupon_id = $_POST['coupon_id'] ?? null;
     
     if (empty($first_name) || empty($last_name) || empty($address) || empty($phone)) {
         echo json_encode(['success' => false, 'message' => 'Please fill in all required shipping fields']);
@@ -51,11 +52,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $shipping_cost = $subtotal > 100 ? 0 : 9.99;
-    $total_price = $subtotal + $shipping_cost;
+    $discount_amount = 0;
+
+    // Handle coupon if provided
+    if ($coupon_id) {
+        $c_stmt = $conn->prepare("SELECT * FROM coupons WHERE id = ? AND status = 'active' AND expiry_date >= CURDATE()");
+        $c_stmt->bind_param("i", $coupon_id);
+        $c_stmt->execute();
+        $c_res = $c_stmt->get_result();
+        if ($coupon = $c_res->fetch_assoc()) {
+            // Re-validate usage limit
+            if ($coupon['usage_limit'] === null || $coupon['used_count'] < $coupon['usage_limit']) {
+                if ($subtotal >= $coupon['min_order_amount']) {
+                    if ($coupon['discount_type'] === 'percentage') {
+                        $discount_amount = ($coupon['discount_value'] / 100) * $subtotal;
+                    } else {
+                        $discount_amount = $coupon['discount_value'];
+                    }
+                    $discount_amount = min($discount_amount, $subtotal);
+                    
+                    // Increment usage count
+                    $conn->query("UPDATE coupons SET used_count = used_count + 1 WHERE id = $coupon_id");
+                }
+            }
+        }
+    }
+
+    $total_price = $subtotal + $shipping_cost - $discount_amount;
     
     // Create order
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("idsssssssssd", $user_id, $total_price, $first_name, $last_name, $email, $phone, $address, $country, $state, $city, $zip_code, $shipping_cost);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost, coupon_id, discount_amount) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("idsssssssssdiid", $user_id, $total_price, $first_name, $last_name, $email, $phone, $address, $country, $state, $city, $zip_code, $shipping_cost, $coupon_id, $discount_amount);
     $stmt->execute();
     $order_id = $conn->insert_id;
     

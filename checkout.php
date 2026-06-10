@@ -221,6 +221,9 @@ stateSelect.addEventListener("change", async () => {
 });
 
 // --- Order Summary ---
+let currentSubtotal = 0;
+let appliedCoupon = null;
+
 async function loadCheckoutSummary() {
     const summary = document.getElementById('order-summary');
     try {
@@ -237,9 +240,9 @@ async function loadCheckoutSummary() {
         }
         
         let itemsHtml = '';
-        let subtotal = 0;
+        currentSubtotal = 0;
         data.cart.forEach(item => {
-            subtotal += item.price * item.quantity;
+            currentSubtotal += item.price * item.quantity;
             itemsHtml += `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                     <span>${item.name} x${item.quantity}</span>
@@ -247,7 +250,80 @@ async function loadCheckoutSummary() {
                 </div>
             `;
         });
+
+        updateSummaryDisplay(itemsHtml);
+    } catch (error) {
+        console.error("Error loading summary:", error);
+    }
+}
+
+function updateSummaryDisplay(itemsHtml) {
+    const shipping = currentSubtotal > 100 ? 0 : 9.99;
+    const discount = appliedCoupon ? appliedCoupon.discount : 0;
+    const total = currentSubtotal + shipping - discount;
+    
+    document.getElementById('order-summary').innerHTML = `
+        <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
+        <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            ${itemsHtml}
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Subtotal</span>
+            <span>$${currentSubtotal.toFixed(2)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Shipping</span>
+            <span>${shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2)}</span>
+        </div>
+        ${appliedCoupon ? `
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #059669; font-weight: 600;">
+            <span>Discount (${appliedCoupon.code})</span>
+            <span>-$${discount.toFixed(2)}</span>
+        </div>
+        ` : ''}
+        <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-color); font-weight: 800; font-size: 1.25rem;">
+            <span>Total</span>
+            <span>$${total.toFixed(2)}</span>
+        </div>
         
+        <div style="margin-top: 2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">Have a coupon?</label>
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="coupon-code" placeholder="Enter code" style="flex: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                <button onclick="applyCoupon()" class="btn btn-sm btn-secondary">Apply</button>
+            </div>
+            <div id="coupon-msg" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+        </div>
+    `;
+}
+
+async function applyCoupon() {
+    const code = document.getElementById('coupon-code').value;
+    const msg = document.getElementById('coupon-msg');
+    
+    if(!code) return;
+    
+    try {
+        const response = await fetch('/eccommerce/api/coupon-validate.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `code=${code}&amount=${currentSubtotal}`
+        });
+        const data = await response.json();
+        
+        if(data.success) {
+            appliedCoupon = data;
+            msg.style.color = '#059669';
+            msg.textContent = data.message;
+            loadCheckoutSummary(); // Refresh display
+        } else {
+            msg.style.color = '#dc2626';
+            msg.textContent = data.message;
+        }
+    } catch (error) {
+        msg.textContent = 'Error validating coupon';
+    }
+}
         const shipping = subtotal > 100 ? 0 : 9.99;
         const total = subtotal + shipping;
         
@@ -283,6 +359,11 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
     const searchParams = new URLSearchParams();
     for (const pair of formData) {
         searchParams.append(pair[0], pair[1]);
+    }
+
+    // Add coupon data if applied
+    if (appliedCoupon) {
+        searchParams.append('coupon_id', appliedCoupon.coupon_id);
     }
 
     try {

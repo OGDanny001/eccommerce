@@ -31,6 +31,7 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - ✅ **Profile Picture System**: All users (admin & customer) can upload profile photos via the profile page
 - ✅ **Navbar & Admin UI Spacing**: Cleaned up padding, spacing, and visual hierarchy
 - ✅ **Notification System**: Centralized service for Email, Telegram, WhatsApp, and SMS
+- ✅ **Coupon System**: Full lifecycle management (CRUD) and real-time checkout validation
 - ✅ **Payment Gateway Research**: Alternative options for non-document verification
 
 ## Working Features
@@ -38,18 +39,15 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 ### **Customer Experience**
 - **Shopping**: Product browsing, detailed views, related products (all DB-driven)
 - **Cart**: Persistent database-backed cart (synced across devices)
-- **Checkout**: Paystack integration with dynamic shipping information capture
+- **Checkout**: Paystack integration with dynamic shipping information capture and real-time coupon application
+- **Coupons**: Public page for users to find and copy active discount codes
 - **Notifications**: Automated alerts for Signup, Login, Cart additions, Profile updates, and Order status changes
 - **Account**: Dashboard with order stats, full history, and profile management
-    - Upload profile photos
-    - Update name/email
-    - Clean, modern account layout
-- **Navbar**: Shows profile photos (or initials/icon if none uploaded)
 
 ### **Admin Control (Strictly Isolated)**
-- **Interface**: High-end management dashboard with zero customer-facing clutter
 - **Dashboard**: Real-time stats (Total Orders, Revenue, Customers, Products)
 - **Inventory**: Full CRUD management (Add/Edit/Delete products) with instant DB sync
+- **Coupons**: Dedicated management panel to create, update, and delete discount codes (percentage or fixed)
 - **Orders**: View detailed order info and update statuses (Paid, Shipped, Delivered)
 - **Users**: Complete list of registered users and their details
 - **Security**: Strict `requireAdmin()` middleware and automatic redirection from customer account pages

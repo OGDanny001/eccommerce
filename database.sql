@@ -90,6 +90,27 @@ CREATE TABLE IF NOT EXISTS order_items (
 
 -- --------------------------------------------------------
 
+-- Coupons table
+CREATE TABLE IF NOT EXISTS coupons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    discount_type ENUM('percentage', 'fixed') NOT NULL,
+    discount_value DECIMAL(10,2) NOT NULL,
+    expiry_date DATE NOT NULL,
+    usage_limit INT DEFAULT NULL, -- NULL means unlimited
+    used_count INT DEFAULT 0,
+    min_order_amount DECIMAL(10,2) DEFAULT 0.00,
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add coupon_id to orders table to track which coupon was used
+ALTER TABLE orders ADD COLUMN coupon_id INT DEFAULT NULL;
+ALTER TABLE orders ADD COLUMN discount_amount DECIMAL(10,2) DEFAULT 0.00;
+ALTER TABLE orders ADD FOREIGN KEY (coupon_id) REFERENCES coupons(id);
+
+-- --------------------------------------------------------
+
 -- Insert sample categories
 INSERT INTO categories (name, slug) VALUES 
 ('Electronics', 'electronics'),

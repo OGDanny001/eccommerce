@@ -108,6 +108,9 @@ requireAdmin();
             <a href="/eccommerce/admin/products.php" class="admin-nav-link <?php echo ($activePage == 'products') ? 'active' : ''; ?>">
                 <i class="fas fa-box-open"></i> Products
             </a>
+            <a href="/eccommerce/admin/coupons.php" class="admin-nav-link <?php echo ($activePage == 'coupons') ? 'active' : ''; ?>">
+                <i class="fas fa-ticket-alt"></i> Coupons
+            </a>
             <a href="/eccommerce/admin/users.php" class="admin-nav-link <?php echo ($activePage == 'users') ? 'active' : ''; ?>">
                 <i class="fas fa-user-friends"></i> Users
             </a>

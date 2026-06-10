@@ -19,6 +19,7 @@ const footerHTML = `
                         <li><a href="/eccommerce/products.php">Shop</a></li>
                         <li><a href="/eccommerce/about.html">About Us</a></li>
                         <li><a href="/eccommerce/contact.html">Contact</a></li>
+                        <li><a href="/eccommerce/coupons.php" style="color: var(--accent-color); font-weight: 700;">Get Coupons</a></li>
                         <li><a href="/eccommerce/faq.html">FAQ</a></li>
                     </ul>
                 </div>
