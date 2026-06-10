@@ -1,5 +1,6 @@
 function getNavbarHTML() {
     const isLoggedIn = currentUser !== null;
+    const isAdmin = isLoggedIn && currentUser.role === 'admin';
     
     let accountLink = '';
     let navLinks = '';
@@ -15,6 +16,7 @@ function getNavbarHTML() {
         navLinks = `
             <li><a href="/eccommerce/index.php" class="${window.location.pathname.includes('index.php') || window.location.pathname.endsWith('/') ? 'active' : ''}">Home</a></li>
             <li><a href="/eccommerce/products.php" class="${window.location.pathname.includes('products.php') ? 'active' : ''}">Shop</a></li>
+            ${isAdmin ? '<li><a href="/eccommerce/admin/index.php" class="' + (window.location.pathname.includes('/admin/') ? 'active' : '') + '"><i class="fas fa-cog"></i> Admin</a></li>' : ''}
             <li><a href="/eccommerce/user/dashboard.php" class="${window.location.pathname.includes('dashboard.php') ? 'active' : ''}">Dashboard</a></li>
             <li><a href="/eccommerce/user/orders.php" class="${window.location.pathname.includes('orders.php') ? 'active' : ''}">Orders</a></li>
             <li><a href="/eccommerce/user/profile.php" class="${window.location.pathname.includes('profile.php') ? 'active' : ''}">Profile</a></li>

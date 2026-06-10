@@ -85,3 +85,24 @@ function logoutUser()
     // Destroy the session
     session_destroy();
 }
+
+/**
+ * Check if current user is admin
+ */
+function isAdmin()
+{
+    $user = getCurrentUser();
+    return $user && $user['role'] === 'admin';
+}
+
+/**
+ * Require admin role, else redirect
+ */
+function requireAdmin()
+{
+    requireLogin();
+    if (!isAdmin()) {
+        header('Location: /eccommerce/index.php');
+        exit;
+    }
+}

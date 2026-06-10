@@ -41,6 +41,11 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - ✅ Phase 3C: Order management system (order creation, order history display on user dashboard and orders page
 - ✅ Phase 3D: Paystack payment gateway integration (checkout with payment verification)
 - ✅ Paystack API keys configured and ready for production testing
+- ✅ Enhanced checkout with dynamic Country/State/City selectors and Intl-Tel-Input
+- ✅ Full shipping information stored in the database for each order
+- ✅ Admin Dashboard & Order/Product Management!
+- ✅ Admin only protection on all admin pages
+- ✅ Admin order status updates (pending/paid/shipped/delivered)
 
 ## Working Features
 
@@ -54,12 +59,12 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - Notifications/toasts
 - Account dashboard (user) with order stats and recent orders
 - User orders page with order history and details
-- Admin dashboard
+- Admin Dashboard (Order & Product management)
 - Database connection
 - Product page with dynamic content from database (using JOIN with categories and prepared statements)
 - Product page handles edge cases (missing/invalid/not found IDs)
 - Full product catalog database-driven (15 sample products added)
-- API endpoints for cart operations (/api/cart-add.php, /api/cart-remove.php, /api/cart-update.php, /api/cart-get.php, /api/order-create.php, /api/verify-payment.php)
+- API endpoints for cart operations (/api/cart-add.php, /api/cart-remove.php, /api/cart-update.php, /api/cart-get.php, /api/order-create.php, /api/verify-payment.php, /api/update-order-status.php)
 - No hardcoded products left in JS/HTML
 - Related products section on product detail page
 - All product links verified and working
@@ -69,9 +74,10 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - User registration with password hashing
 - User login with password verification
 - User logout with session destruction
-- Session-based user authentication
+- Session-based user authentication (supports admin/regular users)
 - Protected user pages (dashboard, orders, profile, addresses)
-- Personalized navbar (shows username when logged in)
+- Protected ADMIN pages (only accessible to admin users)
+- Personalized navbar (shows username when logged in, shows "Admin" link for admins)
 - Personalized dashboard (welcomes user)
 - Profile page shows current user info
 - Auto-login after successful registration
@@ -81,6 +87,7 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - All product links use .php files
 - Paystack payment integration
 - Order history with order items and status
+- Order status updates for admin
 
 ## Database Structure
 
@@ -133,6 +140,7 @@ Complete, modern e-commerce frontend built with HTML, CSS, and vanilla JavaScrip
 - Database-backed cart system implemented
 - Checkout and order management implemented
 - Paystack payment gateway integrated and configured with API keys
+- Dynamic shipping information capture (Country/State/City/Phone) implemented and database-backed
 
 ## Next Planned Phase
 
