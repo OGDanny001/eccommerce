@@ -4,8 +4,6 @@ require 'includes/auth.php';
 
 // Check if user is not logged in - if yes, show message and redirect
 if (!isLoggedIn()) {
-    // Store a temporary message to show on login page
-    // Or just redirect with a query string
     header('Location: /eccommerce/login.php?msg=Please login or create an account to continue checkout.');
     exit;
 }
@@ -13,6 +11,26 @@ if (!isLoggedIn()) {
 $pageTitle = "Checkout - LuxuryStore";
 include 'includes/header.php';
 ?>
+
+<!-- Add Intl-Tel-Input CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+<style>
+    .iti { width: 100%; }
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    .loading-spinner {
+        display: none;
+        margin-left: 10px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+</style>
 
 <!-- Checkout -->
 <section style="padding: 4rem 0;">
@@ -25,48 +43,52 @@ include 'includes/header.php';
                     <div class="form-row">
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" placeholder="John" required>
+                            <input type="text" name="first_name" placeholder="John" required>
                         </div>
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" placeholder="Doe" required>
+                            <input type="text" name="last_name" placeholder="Doe" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" placeholder="john@example.com" required value="<?php echo htmlspecialchars(getCurrentUser()['email']); ?>">
+                        <input type="email" name="email" placeholder="john@example.com" required value="<?php echo htmlspecialchars(getCurrentUser()['email']); ?>">
                     </div>
                     <div class="form-group">
-                        <label>Phone</label>
-                        <input type="tel" placeholder="+1 (555) 123-4567" required>
+                        <label>Phone Number</label>
+                        <input type="tel" id="phone" name="phone_input" required>
+                        <input type="hidden" name="phone">
                     </div>
                     <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" placeholder="123 Main St" required>
+                        <label>Street Address</label>
+                        <input type="text" name="address" placeholder="123 Main St" required>
                     </div>
+                    
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" placeholder="New York" required>
-                        </div>
-                        <div class="form-group">
-                            <label>State</label>
-                            <input type="text" placeholder="NY" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>ZIP Code</label>
-                            <input type="text" placeholder="10001" required>
-                        </div>
                         <div class="form-group">
                             <label>Country</label>
-                            <select>
-                                <option>United States</option>
-                                <option>Canada</option>
-                                <option>United Kingdom</option>
-                                <option>Nigeria</option>
+                            <select id="country" name="country" required>
+                                <option value="">Select Country</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label>State / Province <span id="state-loading" class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></span></label>
+                            <select id="state" name="state" required disabled>
+                                <option value="">Select State</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City <span id="city-loading" class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></span></label>
+                            <select id="city" name="city" required disabled>
+                                <option value="">Select City</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ZIP / Postal Code</label>
+                            <input type="text" name="zip_code" placeholder="10001" required>
                         </div>
                     </div>
 
@@ -79,15 +101,126 @@ include 'includes/header.php';
 
             <div>
                 <div class="order-summary" id="order-summary" style="background: var(--bg-primary); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); height: fit-content;">
-                    <!-- Summary will be loaded from app.js -->
+                    <!-- Summary will be loaded from JS -->
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+<!-- Scripts -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script>
+// --- Phone Input Initialization ---
+const phoneInput = document.querySelector("#phone");
+const iti = window.intlTelInput(phoneInput, {
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+    separateDialCode: true,
+    initialCountry: "auto",
+    geoIpLookup: function(success, failure) {
+        fetch("https://ipapi.co/json").then(res => res.json()).then(data => success(data.country_code)).catch(() => success("us"));
+    }
+});
+
+// --- Country/State/City Cascading Logic ---
+const countrySelect = document.querySelector("#country");
+const stateSelect = document.querySelector("#state");
+const citySelect = document.querySelector("#city");
+const stateLoading = document.querySelector("#state-loading");
+const cityLoading = document.querySelector("#city-loading");
+
+// Load Countries
+async function loadCountries() {
+    try {
+        const response = await fetch("https://countriesnow.space/api/v0.1/countries/positions");
+        const data = await response.json();
+        if (!data.error) {
+            data.data.forEach(country => {
+                const option = document.createElement("option");
+                option.value = country.name;
+                option.textContent = country.name;
+                countrySelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error("Error loading countries:", error);
+    }
+}
+
+// Load States
+countrySelect.addEventListener("change", async () => {
+    const countryName = countrySelect.value;
+    stateSelect.innerHTML = '<option value="">Select State</option>';
+    citySelect.innerHTML = '<option value="">Select City</option>';
+    stateSelect.disabled = true;
+    citySelect.disabled = true;
+
+    if (!countryName) return;
+
+    stateLoading.style.display = "inline";
+    try {
+        const response = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ country: countryName })
+        });
+        const data = await response.json();
+        if (!data.error) {
+            data.data.states.forEach(state => {
+                const option = document.createElement("option");
+                option.value = state.name;
+                option.textContent = state.name;
+                stateSelect.appendChild(option);
+            });
+            stateSelect.disabled = false;
+        }
+    } catch (error) {
+        console.error("Error loading states:", error);
+    } finally {
+        stateLoading.style.display = "none";
+    }
+});
+
+// Load Cities
+stateSelect.addEventListener("change", async () => {
+    const countryName = countrySelect.value;
+    const stateName = stateSelect.value;
+    citySelect.innerHTML = '<option value="">Select City</option>';
+    citySelect.disabled = true;
+
+    if (!stateName) return;
+
+    cityLoading.style.display = "inline";
+    try {
+        const response = await fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ country: countryName, state: stateName })
+        });
+        const data = await response.json();
+        if (!data.error) {
+            data.data.forEach(city => {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+            citySelect.disabled = false;
+        }
+    } catch (error) {
+        // If cities fail, allow manual typing as fallback
+        const option = document.createElement("option");
+        option.value = "Other";
+        option.textContent = "Other (Type below)";
+        citySelect.appendChild(option);
+        citySelect.disabled = false;
+    } finally {
+        cityLoading.style.display = "none";
+    }
+});
+
+// --- Order Summary ---
 async function loadCheckoutSummary() {
     const summary = document.getElementById('order-summary');
     try {
@@ -121,7 +254,7 @@ async function loadCheckoutSummary() {
         summary.innerHTML = `
             <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
             ${itemsHtml}
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
                 <span>Subtotal</span>
                 <span>$${subtotal.toFixed(2)}</span>
             </div>
@@ -129,51 +262,47 @@ async function loadCheckoutSummary() {
                 <span>Shipping</span>
                 <span>${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 1.25rem; font-weight: 700;">
+            <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-color); font-size: 1.25rem; font-weight: 700;">
                 <span>Total</span>
                 <span>$${total.toFixed(2)}</span>
             </div>
         `;
-        
     } catch (error) {
         console.error('Error loading cart:', error);
     }
 }
 
+// --- Form Submission ---
 document.getElementById('checkout-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Validate form
-    if (!validateForm('checkout-form')) {
-        return;
-    }
+    // Set full phone number with dial code
+    document.querySelector('input[name="phone"]').value = iti.getNumber();
     
-    // Create order
+    const formData = new FormData(e.target);
+    const searchParams = new URLSearchParams();
+    for (const pair of formData) {
+        searchParams.append(pair[0], pair[1]);
+    }
+
     try {
         const response = await fetch('/eccommerce/api/order-create.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: searchParams.toString()
         });
         const data = await response.json();
         
         if (data.success) {
-            // Initialize Paystack
             const handler = PaystackPop.setup({
-                key: 'pk_test_0a97a5d545639b2f055c2c8b9041cdb0b32b027c', // Replace with your Paystack public key
+                key: 'pk_test_0a97a5d545639b2f055c2c8b9041cdb0b32b027c',
                 email: data.email,
                 amount: data.amount,
-                currency: 'NGN', // Change to your currency
-                ref: ''+Math.floor((Math.random()*1000000000)+1), // generates a pseudo-unique reference. Please replace with a reference you generated.
-                metadata: {
-                    order_id: data.order_id
-                },
-                callback: function(response) {
-                    // Verify payment
-                    verifyPayment(response.reference, data.order_id);
-                },
-                onClose: function() {
-                    alert('Payment window closed.');
-                }
+                currency: 'NGN',
+                ref: ''+Math.floor((Math.random()*1000000000)+1),
+                metadata: { order_id: data.order_id },
+                callback: function(res) { verifyPayment(res.reference, data.order_id); },
+                onClose: function() { showNotification('Payment window closed.'); }
             });
             handler.openIframe();
         } else {
@@ -193,7 +322,6 @@ async function verifyPayment(reference, orderId) {
             body: `reference=${reference}&order_id=${orderId}`
         });
         const data = await response.json();
-        
         if (data.success) {
             showNotification('Payment successful!');
             window.location.href = '/eccommerce/user/orders.php';
@@ -207,6 +335,7 @@ async function verifyPayment(reference, orderId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadCountries();
     loadCheckoutSummary();
 });
 </script>

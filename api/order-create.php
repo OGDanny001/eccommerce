@@ -12,6 +12,22 @@ if (!isLoggedIn()) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['user_id'];
     
+    // Get shipping info from POST
+    $first_name = $_POST['first_name'] ?? '';
+    $last_name = $_POST['last_name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $country = $_POST['country'] ?? '';
+    $state = $_POST['state'] ?? '';
+    $city = $_POST['city'] ?? '';
+    $zip_code = $_POST['zip_code'] ?? '';
+    
+    if (empty($first_name) || empty($last_name) || empty($address) || empty($phone)) {
+        echo json_encode(['success' => false, 'message' => 'Please fill in all required shipping fields']);
+        exit;
+    }
+    
     // Get cart items
     $stmt = $conn->prepare("SELECT c.product_id, c.quantity, p.name, p.price, p.image 
                            FROM cart c 
@@ -22,10 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
     
     $cart_items = [];
-    $total_price = 0;
+    $subtotal = 0;
     while ($row = $result->fetch_assoc()) {
         $cart_items[] = $row;
-        $total_price += $row['price'] * $row['quantity'];
+        $subtotal += $row['price'] * $row['quantity'];
     }
     
     if (empty($cart_items)) {
@@ -33,9 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    $shipping_cost = $subtotal > 100 ? 0 : 9.99;
+    $total_price = $subtotal + $shipping_cost;
+    
     // Create order
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, 'pending')");
-    $stmt->bind_param("id", $user_id, $total_price);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("idsssssssssd", $user_id, $total_price, $first_name, $last_name, $email, $phone, $address, $country, $state, $city, $zip_code, $shipping_cost);
     $stmt->execute();
     $order_id = $conn->insert_id;
     

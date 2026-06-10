@@ -49,6 +49,17 @@ CREATE TABLE IF NOT EXISTS orders (
     user_id INT,
     total_price DECIMAL(10, 2) NOT NULL,
     status ENUM('pending', 'paid', 'shipped', 'delivered') DEFAULT 'pending',
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    zip_code VARCHAR(20) NOT NULL,
+    payment_reference VARCHAR(255),
+    shipping_cost DECIMAL(10, 2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
