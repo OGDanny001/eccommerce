@@ -324,29 +324,6 @@ async function applyCoupon() {
         msg.textContent = 'Error validating coupon';
     }
 }
-        const shipping = subtotal > 100 ? 0 : 9.99;
-        const total = subtotal + shipping;
-        
-        summary.innerHTML = `
-            <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
-            ${itemsHtml}
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                <span>Subtotal</span>
-                <span>$${subtotal.toFixed(2)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                <span>Shipping</span>
-                <span>${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-color); font-size: 1.25rem; font-weight: 700;">
-                <span>Total</span>
-                <span>$${total.toFixed(2)}</span>
-            </div>
-        `;
-    } catch (error) {
-        console.error('Error loading cart:', error);
-    }
-}
 
 // --- Form Submission ---
 document.getElementById('checkout-form').addEventListener('submit', async (e) => {

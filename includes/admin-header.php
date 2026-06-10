@@ -99,8 +99,11 @@ requireAdmin();
             <span style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Management Suite</span>
         </div>
         <nav class="admin-nav">
-            <a href="/eccommerce/admin/index.php" class="admin-nav-link <?php echo ($activePage == 'dashboard') ? 'active' : ''; ?>">
-                <i class="fas fa-th-large"></i> Dashboard
+            <a href="/eccommerce/admin/analytics.php" class="admin-nav-link <?php echo ($activePage == 'analytics') ? 'active' : ''; ?>">
+                <i class="fas fa-chart-area"></i> Analytics
+            </a>
+            <a href="/eccommerce/admin/index.php" class="admin-nav-link <?php echo ($activePage == 'index') ? 'active' : ''; ?>">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
             <a href="/eccommerce/admin/orders.php" class="admin-nav-link <?php echo ($activePage == 'orders') ? 'active' : ''; ?>">
                 <i class="fas fa-shopping-cart"></i> Orders
