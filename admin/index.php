@@ -1,169 +1,80 @@
 <?php
-require '../includes/auth.php';
-requireAdmin(); // Admin only!
+$pageTitle = "Admin Dashboard";
+$activePage = "dashboard";
+require_once '../includes/admin-header.php';
 
-$pageTitle = "Admin - Dashboard";
-require '../includes/header.php';
+// Fetch stats
+// 1. Total Orders
+$res = $conn->query("SELECT COUNT(*) as count FROM orders");
+$totalOrders = $res->fetch_assoc()['count'];
 
-// Get all orders
-$stmt = $conn->prepare("SELECT * FROM orders ORDER BY created_at DESC");
-$stmt->execute();
-$orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+// 2. Total Revenue
+$res = $conn->query("SELECT SUM(total_price) as total FROM orders WHERE status = 'paid' OR status = 'shipped' OR status = 'delivered'");
+$totalRevenue = $res->fetch_assoc()['total'] ?? 0;
+
+// 3. Total Users
+$res = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'user'");
+$totalUsers = $res->fetch_assoc()['count'];
+
+// 4. Total Products
+$res = $conn->query("SELECT COUNT(*) as count FROM products");
+$totalProducts = $res->fetch_assoc()['count'];
+
+// Latest Orders
+$latestOrders = $conn->query("SELECT * FROM orders ORDER BY created_at DESC LIMIT 5")->fetch_all(MYSQLI_ASSOC);
 ?>
 
-<style>
-.admin-container {
-    padding: 2rem 0;
-}
-.admin-sidebar {
-    background: var(--bg-primary);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
-}
-.admin-content {
-    background: var(--bg-primary);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    box-shadow: var(--shadow-sm);
-}
-.admin-nav-item {
-    display: block;
-    padding: 0.8rem 1rem;
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-.admin-nav-item.active, .admin-nav-item:hover {
-    background: var(--primary-color);
-    color: white;
-}
-.status-badge {
-    padding: 0.3rem 0.7rem;
-    border-radius: 100px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-.status-pending { background: #fef3c7; color: #92400e; }
-.status-paid { background: #dbeafe; color: #1e40af; }
-.status-shipped { background: #ddd6fe; color: #5b21b6; }
-.status-delivered { background: #d1fae5; color: #065f46; }
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.admin-table th, .admin-table td {
-    padding: 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-select {
-    padding: 0.5rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    background: var(--bg-primary);
-}
-</style>
-
-<div class="container">
-    <div class="admin-container">
-        <h2 style="margin-bottom: 1.5rem;">Admin Dashboard</h2>
-        <div class="account-layout">
-            <aside class="admin-sidebar">
-                <a href="/eccommerce/admin/index.php" class="admin-nav-item active">
-                    <i class="fas fa-shopping-bag"></i> Orders
-                </a>
-                <a href="/eccommerce/admin/products.php" class="admin-nav-item">
-                    <i class="fas fa-box"></i> Products
-                </a>
-                <hr style="margin: 1rem 0;">
-                <a href="/eccommerce/index.php" class="admin-nav-item">
-                    <i class="fas fa-arrow-left"></i> Back to Shop
-                </a>
-            </aside>
-            <main class="admin-content">
-                <h3 style="margin-bottom: 1.5rem;">All Orders</h3>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orders-table">
-                            <?php if (empty($orders)): ?>
-                                <tr><td colspan="6">No orders yet.</td></tr>
-                            <?php else: ?>
-                                <?php foreach ($orders as $order): ?>
-                                    <tr id="order-row-<?= $order['id'] ?>">
-                                        <td>#<?= $order['id'] ?></td>
-                                        <td>
-                                            <strong><?= htmlspecialchars($order['first_name'] . ' ' . $order['last_name']) ?></strong><br>
-                                            <span style="color: var(--text-muted);"><?= htmlspecialchars($order['email']) ?></span>
-                                        </td>
-                                        <td><?= date('M j, Y g:i A', strtotime($order['created_at'])) ?></td>
-                                        <td>$<?= number_format($order['total_price'], 2) ?></td>
-                                        <td>
-                                            <span class="status-badge status-<?= $order['status'] ?>">
-                                                <?= ucfirst($order['status']) ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <select class="order-status-select" data-order-id="<?= $order['id'] ?>" style="min-width: 120px;">
-                                                <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                                <option value="paid" <?= $order['status'] == 'paid' ? 'selected' : '' ?>>Paid</option>
-                                                <option value="shipped" <?= $order['status'] == 'shipped' ? 'selected' : '' ?>>Shipped</option>
-                                                <option value="delivered" <?= $order['status'] == 'delivered' ? 'selected' : '' ?>>Delivered</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="admin-card" style="border-left: 4px solid #3b82f6;">
+        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Total Orders</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;"><?php echo $totalOrders; ?></div>
+    </div>
+    <div class="admin-card" style="border-left: 4px solid #10b981;">
+        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Total Revenue</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;">$<?php echo number_format($totalRevenue, 2); ?></div>
+    </div>
+    <div class="admin-card" style="border-left: 4px solid #f59e0b;">
+        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Customers</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;"><?php echo $totalUsers; ?></div>
+    </div>
+    <div class="admin-card" style="border-left: 4px solid #8b5cf6;">
+        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">Total Products</div>
+        <div style="font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem;"><?php echo $totalProducts; ?></div>
     </div>
 </div>
 
-<script>
-document.querySelectorAll('.order-status-select').forEach(select => {
-    select.addEventListener('change', async (e) => {
-        const orderId = e.target.dataset.orderId;
-        const newStatus = e.target.value;
-        
-        try {
-            const response = await fetch('/eccommerce/api/update-order-status.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `order_id=${orderId}&status=${newStatus}`
-            });
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update the badge color/label visually too
-                const row = document.querySelector(`#order-row-${orderId}`);
-                const badge = row.querySelector('.status-badge');
-                badge.className = `status-badge status-${newStatus}`;
-                badge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
-                showNotification('Order status updated!');
-            } else {
-                showNotification('Error updating status');
-            }
-        } catch (error) {
-            console.error(error);
-            showNotification('Error updating status');
-        }
-    });
-});
-</script>
+<div class="admin-card">
+    <h3 style="margin-bottom: 1.5rem;">Recent Orders</h3>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid #e5e7eb;">
+                    <th style="padding: 1rem;">ID</th>
+                    <th style="padding: 1rem;">Customer</th>
+                    <th style="padding: 1rem;">Date</th>
+                    <th style="padding: 1rem;">Total</th>
+                    <th style="padding: 1rem;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($latestOrders as $order): ?>
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <td style="padding: 1rem;">#<?php echo $order['id']; ?></td>
+                    <td style="padding: 1rem;"><?php echo htmlspecialchars($order['first_name'] . ' ' . $order['last_name']); ?></td>
+                    <td style="padding: 1rem;"><?php echo date('M j, Y', strtotime($order['created_at'])); ?></td>
+                    <td style="padding: 1rem;">$<?php echo number_format($order['total_price'], 2); ?></td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
+                            background: <?php echo $order['status'] == 'paid' ? '#d1fae5' : '#fee2e2'; ?>; 
+                            color: <?php echo $order['status'] == 'paid' ? '#065f46' : '#991b1b'; ?>;">
+                            <?php echo ucfirst($order['status']); ?>
+                        </span>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<?php require '../includes/footer.php'; ?>
+<?php require_once '../includes/admin-footer.php'; ?>

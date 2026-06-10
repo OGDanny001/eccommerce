@@ -7,8 +7,8 @@ require 'config/db.php';
 
 // If the script gets here, proceed to create admin user
 $name = "Store Admin";
-$email = "admin@yourstore.com"; // CHANGE THIS EMAIL!
-$password = "admin123"; // CHANGE THIS PASSWORD!
+$email = "codewithdan001@gmail.com"; // CHANGE THIS EMAIL!
+$password = "Readytoearn@12"; // CHANGE THIS PASSWORD!
 
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 

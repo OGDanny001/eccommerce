@@ -2,6 +2,8 @@
 CREATE DATABASE IF NOT EXISTS ecommerce;
 USE ecommerce;
 
+-- --------------------------------------------------------
+
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT,
@@ -9,6 +11,8 @@ CREATE TABLE IF NOT EXISTS categories (
     slug VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (id)
 );
+
+-- --------------------------------------------------------
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
@@ -19,6 +23,8 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('user', 'admin') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- --------------------------------------------------------
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
@@ -33,6 +39,8 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
+-- --------------------------------------------------------
+
 -- Cart table
 CREATE TABLE IF NOT EXISTS cart (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -42,6 +50,8 @@ CREATE TABLE IF NOT EXISTS cart (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
+-- --------------------------------------------------------
 
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
@@ -64,6 +74,8 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
+-- --------------------------------------------------------
+
 -- Order items table
 CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -75,6 +87,8 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+-- --------------------------------------------------------
+
 -- Insert sample categories
 INSERT INTO categories (name, slug) VALUES 
 ('Electronics', 'electronics'),
@@ -82,6 +96,8 @@ INSERT INTO categories (name, slug) VALUES
 ('Home & Garden', 'home-garden'),
 ('Sports', 'sports'),
 ('Accessories', 'accessories');
+
+-- --------------------------------------------------------
 
 -- Insert sample products
 INSERT INTO products (name, description, price, image, category_id, stock) VALUES
