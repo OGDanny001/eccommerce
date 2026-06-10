@@ -30,6 +30,7 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - ✅ Real-time database synchronization for all admin actions
 - ✅ **Profile Picture System**: All users (admin & customer) can upload profile photos via the profile page
 - ✅ **Navbar & Admin UI Spacing**: Cleaned up padding, spacing, and visual hierarchy
+- ✅ **Notification System**: Centralized service for Email, Telegram, WhatsApp, and SMS
 - ✅ **Payment Gateway Research**: Alternative options for non-document verification
 
 ## Working Features
@@ -38,6 +39,7 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **Shopping**: Product browsing, detailed views, related products (all DB-driven)
 - **Cart**: Persistent database-backed cart (synced across devices)
 - **Checkout**: Paystack integration with dynamic shipping information capture
+- **Notifications**: Automated alerts for Signup, Login, Cart additions, Profile updates, and Order status changes
 - **Account**: Dashboard with order stats, full history, and profile management
     - Upload profile photos
     - Update name/email
@@ -51,6 +53,17 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **Orders**: View detailed order info and update statuses (Paid, Shipped, Delivered)
 - **Users**: Complete list of registered users and their details
 - **Security**: Strict `requireAdmin()` middleware and automatic redirection from customer account pages
+
+## Notification Channels
+- **Email**: HTML formatted system emails
+- **Telegram**: Bot-based instant alerts
+- **WhatsApp**: Twilio-integrated business messaging
+- **SMS**: Global text message notifications
+
+## Configuration Required
+To enable notifications, update `includes/notifications.php` with:
+- Telegram Bot Token & Chat ID
+- Twilio SID, Token, and Phone Numbers
 
 ## Database Structure
 

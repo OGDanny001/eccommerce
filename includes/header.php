@@ -1,4 +1,4 @@
-j <?php
+<?php
 // Include auth functions to check login status
 require_once __DIR__ . '/auth.php';
 

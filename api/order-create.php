@@ -1,6 +1,7 @@
 <?php
 require '../config/db.php';
 require '../includes/auth.php';
+require '../includes/notifications.php';
 
 header('Content-Type: application/json');
 
@@ -69,6 +70,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
+
+    // Send Checkout Notification
+    $current_user = getCurrentUser();
+    $current_user['phone'] = $phone; // Use the phone from shipping info
+    sendNotification(
+        $current_user,
+        "Order Placed Successfully",
+        "Hello " . $current_user['name'] . ", your order <b>#$order_id</b> has been placed successfully for <b>$" . number_format($total_price, 2) . "</b>. We will notify you when it ships!"
+    );
     
     // Return order data for Paystack
     $current_user = getCurrentUser();

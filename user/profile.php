@@ -1,5 +1,6 @@
 <?php
 require '../includes/auth.php';
+require '../includes/notifications.php';
 requireLogin();
 $currentUser = getCurrentUser();
 $pageTitle = "Profile Settings - LuxuryStore";
@@ -34,6 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['name'] = $name;
         $currentUser = getCurrentUser();
         $message = 'Profile updated successfully!';
+
+        // Send Profile Update Notification
+        sendNotification(
+            $currentUser,
+            "Profile Updated",
+            "Hello " . $currentUser['name'] . ", your profile settings have been updated successfully."
+        );
     } else {
         $message = 'Error updating profile: ' . $conn->error;
         $messageType = 'error';

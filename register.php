@@ -2,6 +2,7 @@
 // Include the database connection and auth functions
 require 'config/db.php';
 require 'includes/auth.php';
+require 'includes/notifications.php';
 
 // Initialize error message variable
 $error = '';
@@ -64,6 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Auto-login the user
             loginUser($newUserId, $name, $email);
+
+            // Send Welcome Notification
+            sendNotification(
+                ['name' => $name, 'email' => $email],
+                "Welcome to LuxuryStore!",
+                "Hello $name, your account has been successfully created. Welcome to LuxuryStore!"
+            );
             
             // Redirect to dashboard
             header('Location: /eccommerce/user/dashboard.php');

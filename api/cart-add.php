@@ -1,6 +1,7 @@
 <?php
 require '../config/db.php';
 require '../includes/auth.php';
+require '../includes/notifications.php';
 
 header('Content-Type: application/json');
 
@@ -33,6 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert_stmt->bind_param("iii", $user_id, $product_id, $quantity);
         $insert_stmt->execute();
     }
+
+    // Get product name for notification
+    $p_stmt = $conn->prepare("SELECT name FROM products WHERE id = ?");
+    $p_stmt->bind_param("i", $product_id);
+    $p_stmt->execute();
+    $p_res = $p_stmt->get_result();
+    $product_name = "A product";
+    if ($p_row = $p_res->fetch_assoc()) {
+        $product_name = $p_row['name'];
+    }
+
+    // Send Cart Notification
+    $currentUser = getCurrentUser();
+    sendNotification(
+        $currentUser,
+        "Item Added to Cart",
+        "Hello " . $currentUser['name'] . ", you just added <b>$product_name</b> to your cart. Happy shopping!"
+    );
 
     echo json_encode(['success' => true, 'message' => 'Item added to cart']);
 } else {

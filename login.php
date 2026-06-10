@@ -2,6 +2,7 @@
 // Include database and authentication helper files
 require 'config/db.php';
 require 'includes/auth.php';
+require 'includes/notifications.php';
 
 // Initialize error and message variables
 $error = '';
@@ -47,6 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (password_verify($password, $user['password'])) {
         // Password is correct - log the user in!
         loginUser($user['id'], $user['name'], $user['email']);
+
+        // Send Login Notification
+        sendNotification(
+            $user,
+            "New Login Detected",
+            "Hello " . $user['name'] . ", a new login was detected on your LuxuryStore account at " . date('Y-m-d H:i:s')
+        );
 
         // Redirect to user dashboard
         header('Location: /eccommerce/user/dashboard.php');
