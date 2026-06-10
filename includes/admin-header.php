@@ -27,7 +27,7 @@ requireAdmin();
             height: 100vh;
             left: 0;
             top: 0;
-            padding: 1.5rem 0;
+            padding: 2.5rem 0;
             display: flex;
             flex-direction: column;
         }
@@ -46,7 +46,7 @@ requireAdmin();
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 0.75rem 1.5rem;
+            padding: 1rem 1.5rem;
             color: #9ca3af;
             text-decoration: none;
             transition: all 0.3s;
@@ -60,13 +60,13 @@ requireAdmin();
         .admin-main {
             flex: 1;
             margin-left: var(--admin-sidebar-width);
-            padding: 2rem;
+            padding: 2.5rem;
             background-color: #f8fafc;
         }
         .admin-top-nav {
             background: white;
-            padding: 1rem 2rem;
-            margin: -2rem -2rem 2rem -2rem;
+            padding: 1.25rem 2rem;
+            margin: -2.5rem -2rem 2.5rem -2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -76,7 +76,7 @@ requireAdmin();
             background: white;
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 1.5rem;
+            padding: 2rem;
             margin-bottom: 2rem;
             border: 1px solid #e2e8f0;
         }
@@ -94,7 +94,7 @@ requireAdmin();
 </head>
 <body>
     <aside class="admin-sidebar">
-        <div style="padding: 0 1.5rem 2rem;">
+        <div style="padding: 0 1.5rem 2.5rem;">
             <a href="/eccommerce/admin/index.php" class="admin-logo" style="padding: 0; margin-bottom: 0.5rem;">Luxury Admin</a>
             <span style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Management Suite</span>
         </div>
@@ -130,8 +130,14 @@ requireAdmin();
                     <div style="font-size: 0.875rem; font-weight: 600; color: #1e293b;"><?php echo htmlspecialchars($_SESSION['name']); ?></div>
                     <div style="font-size: 0.75rem; color: #64748b;">System Administrator</div>
                 </div>
-                <div style="width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                    <?php echo substr($_SESSION['name'], 0, 1); ?>
-                </div>
+                <?php 
+                $currUser = getCurrentUser(); 
+                if ($currUser && $currUser['profile_pic']): ?>
+                    <img src="<?php echo htmlspecialchars($currUser['profile_pic']); ?>" style="width: 40px; height: 40px; border-radius: 999px; object-fit: cover;" alt="Profile">
+                <?php else: ?>
+                    <div style="width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                        <?php echo substr($_SESSION['name'], 0, 1); ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>

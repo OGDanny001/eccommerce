@@ -28,6 +28,9 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - ✅ Admin Product CRUD (Add, Edit, Delete with DB sync)
 - ✅ Admin User & Order management systems
 - ✅ Real-time database synchronization for all admin actions
+- ✅ **Profile Picture System**: All users (admin & customer) can upload profile photos via the profile page
+- ✅ **Navbar & Admin UI Spacing**: Cleaned up padding, spacing, and visual hierarchy
+- ✅ **Payment Gateway Research**: Alternative options for non-document verification
 
 ## Working Features
 
@@ -35,7 +38,11 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **Shopping**: Product browsing, detailed views, related products (all DB-driven)
 - **Cart**: Persistent database-backed cart (synced across devices)
 - **Checkout**: Paystack integration with dynamic shipping information capture
-- **Account**: Dashboard with order stats, full history, and profile management (Strictly for customers)
+- **Account**: Dashboard with order stats, full history, and profile management
+    - Upload profile photos
+    - Update name/email
+    - Clean, modern account layout
+- **Navbar**: Shows profile photos (or initials/icon if none uploaded)
 
 ### **Admin Control (Strictly Isolated)**
 - **Interface**: High-end management dashboard with zero customer-facing clutter
@@ -45,10 +52,9 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **Users**: Complete list of registered users and their details
 - **Security**: Strict `requireAdmin()` middleware and automatic redirection from customer account pages
 
-
 ## Database Structure
 
-- **users**: id, name, email, password, role (user/admin), created_at
+- **users**: id, name, email, password, role (user/admin), profile_pic, created_at
 - **categories**: id, name, slug
 - **products**: id, name, description, price, image, category_id, stock, created_at
 - **cart**: id, user_id, product_id, quantity
@@ -83,8 +89,21 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 │   └── footer.php             # Customer Scripts
 ├── assets/                    # Static Assets
 ├── components/                # JS UI Components
+├── uploads/                   # User profile picture storage
 └── index.php                  # Store Front
 ```
+
+## Payment Gateway Alternatives (No Document Verification Required)
+
+Here are secure options you can explore that don't require extensive business documents to get started:
+
+1. **Flutterwave (Rave)** – Global coverage, supports African currencies; requires basic business info (not complex docs for initial setup).
+2. **PayPal Checkout** – Works worldwide; personal/business accounts easy to setup without full business verification (limits apply initially).
+3. **Coinbase Commerce** – Crypto payments, no traditional business verification needed.
+4. **Square (Online Checkout)** – Good for US-based sellers; simple setup.
+5. **Stripe (Express Account)** – Faster onboarding in certain regions, minimal initial docs.
+
+*Note: Always check current requirements on provider's site, as policies change.*
 
 ## Current System State
 
@@ -92,9 +111,11 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **Backend**: Fully functional PHP/MySQL architecture
 - **Admin**: Complete management suite implemented and secured
 - **Payments**: Paystack integrated and tested
+- **Profile System**: Fully working photo uploads and user profile management
 
 ## Next Planned Phase
 
 - **Coupons**: Implementation of discount code system
+- **Notifications**: Email/SMS notifications for orders, account actions, etc.
 - **Advanced Admin**: Sales reporting and analytics charts
 - **Email Notifications**: Automated order confirmation emails

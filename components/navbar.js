@@ -6,10 +6,13 @@ function getNavbarHTML() {
     let navLinks = '';
 
     if (isAdmin) {
-        // STRICT ADMIN NAVBAR
+        // ADMIN NAVBAR
         accountLink = `
-            <a href="/eccommerce/admin/index.php" class="btn btn-sm btn-outline">
-                <i class="fas fa-user-shield"></i> Admin: ${currentUser.name}
+            <a href="/eccommerce/admin/index.php" class="btn btn-sm btn-outline" style="display:flex;align-items:center;gap:0.5rem;">
+                ${currentUser.profile_pic 
+                    ? `<img src="${currentUser.profile_pic}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">` 
+                    : `<i class="fas fa-user-shield"></i>`}
+                Admin: ${currentUser.name}
             </a>
             <a href="/eccommerce/logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
                 Logout
@@ -25,8 +28,11 @@ function getNavbarHTML() {
     } else if (isLoggedIn) {
         // CUSTOMER NAVBAR
         accountLink = `
-            <a href="/eccommerce/user/dashboard.php" class="btn btn-sm btn-outline">
-                <i class="fas fa-user"></i> Welcome, ${currentUser.name}
+            <a href="/eccommerce/user/dashboard.php" class="btn btn-sm btn-outline" style="display:flex;align-items:center;gap:0.5rem;">
+                ${currentUser.profile_pic 
+                    ? `<img src="${currentUser.profile_pic}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">` 
+                    : `<i class="fas fa-user"></i>`}
+                Welcome, ${currentUser.name}
             </a>
             <a href="/eccommerce/logout.php" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;">
                 Logout

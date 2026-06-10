@@ -51,7 +51,7 @@ function getCurrentUser()
     $userId = $_SESSION['user_id'];
 
     // Prepare SQL to get user from database using their ID
-    $stmt = $conn->prepare("SELECT id, name, email, role FROM users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, name, email, role, profile_pic FROM users WHERE id = ?");
     $stmt->bind_param("i", $userId); // "i" means integer parameter
     $stmt->execute();
     $result = $stmt->get_result();

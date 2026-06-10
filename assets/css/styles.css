@@ -154,7 +154,7 @@ h6 { font-size: 1rem; }
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
-    padding: 1rem 0;
+    padding: 1.25rem 0;
 }
 
 .logo {
@@ -167,7 +167,7 @@ h6 { font-size: 1rem; }
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 2.25rem;
 }
 
 .nav-links a {
@@ -175,6 +175,7 @@ h6 { font-size: 1rem; }
     color: var(--text-primary);
     font-weight: 500;
     transition: color 0.2s ease;
+    padding: 0.5rem 0;
 }
 
 .nav-links a:hover, .nav-links a.active {
