@@ -66,11 +66,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Auto-login the user
             loginUser($newUserId, $name, $email);
 
-            // Send Welcome Notification
+            // Send Welcome Notification (external channels)
             sendNotification(
                 ['name' => $name, 'email' => $email],
                 "Welcome to LuxuryStore!",
                 "Hello $name, your account has been successfully created. Welcome to LuxuryStore!"
+            );
+            
+            // Send Telegram notification for new user registration
+            // Triggered at: register.php line ~69, after new user is created
+            $telegramMessage = "🆕 New User Registration\n\nName: " . htmlspecialchars($name) . "\nEmail: " . htmlspecialchars($email) . "\nTime: " . date('Y-m-d H:i:s');
+            sendTelegramMessage($telegramMessage);
+            
+            // Create database notification
+            createNotification(
+                $newUserId,
+                "Welcome to LuxuryStore!",
+                "Hello $name, your account has been successfully created. Start shopping now!"
             );
             
             // Redirect to dashboard

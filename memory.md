@@ -61,9 +61,28 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - **SMS**: Global text message notifications
 
 ## Configuration Required
-To enable notifications, update `includes/notifications.php` with:
-- Telegram Bot Token & Chat ID
-- Twilio SID, Token, and Phone Numbers
+To enable notifications:
+1. **Telegram**: Update `config/telegram.php` with your Telegram Bot Token
+2. **Twilio**: Update `includes/notifications.php` with Twilio SID, Token, and Phone Numbers
+
+## Telegram Integration
+### How to Test Telegram Notifications
+1. Create a Telegram bot using @BotFather and get your bot token
+2. Start a chat with your bot and get your chat ID (use @userinfobot)
+3. Set your bot token in `config/telegram.php`
+4. Test each event:
+   - **New User Registration**: Register a new account
+   - **User Login**: Login to an existing account
+   - **New Order**: Create a new order
+   - **Payment Confirmed**: Complete payment for an order
+
+### Notification Events
+| Event | Triggered At | Message Format |
+|-------|--------------|----------------|
+| New User Registration | register.php | 🆕 New User Registration\n\nName: [name]\nEmail: [email]\nTime: [time] |
+| User Login | login.php | 🔐 User Login\n\nName: [name]\nEmail: [email]\nTime: [time] |
+| New Order | api/order-create.php | 🛒 New Order\n\nOrder ID: #[order_id]\nCustomer: [name]\nAmount: $[amount] |
+| Payment Confirmed | api/verify-payment.php | 💳 Payment Confirmed\n\nOrder ID: #[order_id]\nCustomer: [name]\nAmount: $[amount] |
 
 ## Database Structure
 
@@ -129,6 +148,7 @@ Here are secure options you can explore that don't require extensive business do
 - **Payments**: Paystack integrated and tested
 - **Profile System**: Fully working photo uploads and user profile management
 - ✅ **Internal Notification System**: Database-backed notifications with navbar bell icon, unread count badge, recent notifications dropdown, mark as read functionality, and dashboard recent notifications section
+- ✅ **Telegram Notifications**: Implemented Telegram notifications for new user registration, user login, new order, and payment confirmation using cURL. Configuration centralized in config/telegram.php.
 
 ## Next Planned Phase
 

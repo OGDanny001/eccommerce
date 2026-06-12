@@ -31,12 +31,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Get cart items
-    $stmt = $conn->prepare("SELECT c.product_id, c.quantity, p.name, p.price, p.image 
+    $stmt = $conn->prepare("SELECT c.product_id, c.quantity, p.name, p.price 
                            FROM cart c 
                            JOIN products p ON c.product_id = p.id 
                            WHERE c.user_id = ?");
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Cart prepare failed: ' . $conn->error]);
+        exit;
+    }
     $stmt->bind_param("i", $user_id);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        echo json_encode(['success' => false, 'message' => 'Cart execute failed: ' . $stmt->error]);
+        exit;
+    }
     $result = $stmt->get_result();
     
     $cart_items = [];
@@ -54,36 +61,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $shipping_cost = $subtotal > 100 ? 0 : 9.99;
     $discount_amount = 0;
 
-    // Handle coupon if provided
+    // Handle coupon if provided - wrap in try/catch in case coupons table isn't set up yet
     if ($coupon_id) {
-        $c_stmt = $conn->prepare("SELECT * FROM coupons WHERE id = ? AND status = 'active' AND expiry_date >= CURDATE()");
-        $c_stmt->bind_param("i", $coupon_id);
-        $c_stmt->execute();
-        $c_res = $c_stmt->get_result();
-        if ($coupon = $c_res->fetch_assoc()) {
-            // Re-validate usage limit
-            if ($coupon['usage_limit'] === null || $coupon['used_count'] < $coupon['usage_limit']) {
-                if ($subtotal >= $coupon['min_order_amount']) {
-                    if ($coupon['discount_type'] === 'percentage') {
-                        $discount_amount = ($coupon['discount_value'] / 100) * $subtotal;
-                    } else {
-                        $discount_amount = $coupon['discount_value'];
+        try {
+            $c_stmt = $conn->prepare("SELECT * FROM coupons WHERE id = ? AND status = 'active' AND expiry_date >= CURDATE()");
+            $c_stmt->bind_param("i", $coupon_id);
+            $c_stmt->execute();
+            $c_res = $c_stmt->get_result();
+            if ($coupon = $c_res->fetch_assoc()) {
+                // Re-validate usage limit
+                if ($coupon['usage_limit'] === null || $coupon['used_count'] < $coupon['usage_limit']) {
+                    if ($subtotal >= $coupon['min_order_amount']) {
+                        if ($coupon['discount_type'] === 'percentage') {
+                            $discount_amount = ($coupon['discount_value'] / 100) * $subtotal;
+                        } else {
+                            $discount_amount = $coupon['discount_value'];
+                        }
+                        $discount_amount = min($discount_amount, $subtotal);
+                        
+                        // Increment usage count
+                        $conn->query("UPDATE coupons SET used_count = used_count + 1 WHERE id = $coupon_id");
                     }
-                    $discount_amount = min($discount_amount, $subtotal);
-                    
-                    // Increment usage count
-                    $conn->query("UPDATE coupons SET used_count = used_count + 1 WHERE id = $coupon_id");
                 }
             }
+        } catch (Exception $e) {
+            // Coupon table or columns don't exist yet, ignore discount
+            $discount_amount = 0;
+            $coupon_id = null;
         }
     }
 
     $total_price = $subtotal + $shipping_cost - $discount_amount;
     
-    // Create order
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost, coupon_id, discount_amount) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("idsssssssssdiid", $user_id, $total_price, $first_name, $last_name, $email, $phone, $address, $country, $state, $city, $zip_code, $shipping_cost, $coupon_id, $discount_amount);
-    $stmt->execute();
+    // Create order - FIRST TRY WITHOUT COUPON COLUMNS, then fall back
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    if (!$stmt) {
+        // Maybe coupon columns DO exist - try again with them!
+        $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost, coupon_id, discount_amount) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            echo json_encode(['success' => false, 'message' => 'Order prepare failed: ' . $conn->error]);
+            exit;
+        }
+        $stmt->bind_param("idsssssssssdiid", $user_id, $total_price, $first_name, $last_name, $email, $phone, $address, $country, $state, $city, $zip_code, $shipping_cost, $coupon_id, $discount_amount);
+    } else {
+        $stmt->bind_param("idsssssssssd", $user_id, $total_price, $first_name, $last_name, $email, $phone, $address, $country, $state, $city, $zip_code, $shipping_cost);
+    }
+    
+    if (!$stmt->execute()) {
+        echo json_encode(['success' => false, 'message' => 'Order execute failed: ' . $stmt->error]);
+        exit;
+    }
     $order_id = $conn->insert_id;
     
     // Create order items
@@ -98,14 +125,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
 
-    // Send Checkout Notification
-    $current_user = getCurrentUser();
-    $current_user['phone'] = $phone; // Use the phone from shipping info
-    sendNotification(
-        $current_user,
-        "Order Placed Successfully",
-        "Hello " . $current_user['name'] . ", your order <b>#$order_id</b> has been placed successfully for <b>$" . number_format($total_price, 2) . "</b>. We will notify you when it ships!"
-    );
+    // Send notifications (don't fail the whole order if this fails)
+    try {
+        $current_user = getCurrentUser();
+        $current_user['phone'] = $phone; // Use the phone from shipping info
+        
+        // External notifications
+        sendNotification(
+            $current_user,
+            "Order Placed Successfully",
+            "Hello " . $current_user['name'] . ", your order #$order_id has been placed successfully for $" . number_format($total_price, 2) . ". We will notify you when it ships!"
+        );
+        
+        // Send Telegram notification for new order
+        // Triggered at: api/order-create.php line ~128, after order is created in database
+        $telegramMessage = "🛒 New Order\n\nOrder ID: #$order_id\nCustomer: " . htmlspecialchars($current_user['name']) . "\nAmount: $" . number_format($total_price, 2);
+        sendTelegramMessage($telegramMessage);
+        
+        // Database notification
+        createNotification(
+            $user_id,
+            "Order Placed Successfully",
+            "Hello " . $current_user['name'] . ", your order #$order_id has been placed successfully for $" . number_format($total_price, 2) . ". We will notify you when it ships!"
+        );
+    } catch (Exception $e) {
+        // Ignore notification errors, order is still good
+    }
     
     // Return order data for Paystack
     $current_user = getCurrentUser();

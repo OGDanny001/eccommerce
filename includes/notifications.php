@@ -7,12 +7,13 @@
 // Include database connection
 require_once __DIR__ . '/../config/db.php';
 
+// Include Telegram configuration
+require_once __DIR__ . '/../config/telegram.php';
+
 // Configuration - Replace with your real API keys
-define('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN');
-define('TELEGRAM_CHAT_ID', 'YOUR_TELEGRAM_CHAT_ID');
 define('TWILIO_SID', 'YOUR_TWILIO_SID');
 define('TWILIO_TOKEN', 'YOUR_TWILIO_TOKEN');
-define('TWILIO_PHONE', 'YOUR_TWILIO_PHONE_NUMBER');
+define('TWILIO_PHONE', 'YOUR_TELEGRAM_PHONE_NUMBER');
 define('TWILIO_WHATSAPP', 'YOUR_TWILIO_WHATSAPP_NUMBER'); // Format: whatsapp:+123456789
 
 /**
@@ -74,28 +75,61 @@ function sendEmailNotification($to, $subject, $message) {
 }
 
 /**
- * Send Telegram Notification
+ * Send Telegram Message using cURL
+ * 
+ * @param string $message The message to send
+ * @return bool True if message sent successfully, false otherwise
  */
-function sendTelegramNotification($message) {
-    if (TELEGRAM_BOT_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN') return false;
+function sendTelegramMessage($message) {
+    // Check if bot token is configured
+    if (TELEGRAM_BOT_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN') {
+        return false;
+    }
 
-    $url = "https://api.telegram.org/bot" . TELEGRAM_BOT_TOKEN . "/sendMessage";
-    $data = [
+    // Telegram API URL
+    $apiUrl = "https://api.telegram.org/bot" . TELEGRAM_BOT_TOKEN . "/sendMessage";
+
+    // Prepare POST data
+    $postData = http_build_query([
         'chat_id' => TELEGRAM_CHAT_ID,
         'text' => $message,
         'parse_mode' => 'HTML'
-    ];
+    ]);
 
-    $options = [
-        'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data)
-        ]
-    ];
-    $context  = stream_context_create($options);
-    $result = @file_get_contents($url, false, $context);
-    return $result !== false;
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification (for testing)
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set timeout to 10 seconds
+
+    // Execute cURL request
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+
+    // Close cURL session
+    curl_close($ch);
+
+    // Check for errors and return status
+    if ($error) {
+        return false;
+    }
+
+    // Check if HTTP code is 200 (OK)
+    return $httpCode === 200;
+}
+
+/**
+ * Send Telegram Notification
+ */
+function sendTelegramNotification($message) {
+    // Call the new sendTelegramMessage function
+    return sendTelegramMessage($message);
 }
 
 /**

@@ -1,6 +1,7 @@
 <?php
 require '../config/db.php';
 require '../includes/auth.php';
+require '../includes/notifications.php';
 
 header('Content-Type: application/json');
 
@@ -37,6 +38,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE orders SET status = 'paid' WHERE id = ?");
         $stmt->bind_param("i", $order_id);
         $stmt->execute();
+        
+        // Get order and user info for notification
+        $stmt = $conn->prepare("SELECT user_id, total_price FROM orders WHERE id = ?");
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
+        $result_order = $stmt->get_result();
+        if ($order = $result_order->fetch_assoc()) {
+            $current_user = getCurrentUser();
+            
+            // Send Telegram notification for payment confirmation
+            // Triggered at: api/verify-payment.php line ~36, after successful payment verification
+            $telegramMessage = "💳 Payment Confirmed\n\nOrder ID: #$order_id\nCustomer: " . htmlspecialchars($current_user['name']) . "\nAmount: $" . number_format($order['total_price'], 2);
+            sendTelegramMessage($telegramMessage);
+            
+            // Create database notification
+            createNotification(
+                $order['user_id'],
+                "Payment Confirmed!",
+                "Great news! Your payment for order #$order_id has been confirmed. We're processing your order now!"
+            );
+        }
         
         echo json_encode(['success' => true, 'message' => 'Payment verified successfully']);
     } else {
