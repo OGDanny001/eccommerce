@@ -16,6 +16,38 @@ define('TWILIO_TOKEN', 'YOUR_TWILIO_TOKEN');
 define('TWILIO_PHONE', 'YOUR_TELEGRAM_PHONE_NUMBER');
 define('TWILIO_WHATSAPP', 'YOUR_TWILIO_WHATSAPP_NUMBER'); // Format: whatsapp:+123456789
 
+// =============================================
+// CENTRAL NOTIFICATION SYSTEM
+// =============================================
+
+/**
+ * Send a system notification - this is the ONE function to rule them all!
+ * Handles both internal database notifications AND external channels (like Telegram)
+ * 
+ * @param int $user_id User ID to send to
+ * @param string $title Notification title (for database)
+ * @param string $message Notification message (for database)
+ * @param string $telegram_message Optional custom Telegram message (if different from database message)
+ * @param array $user_data Optional user data (name, email, etc.) for external notifications
+ * @return array Results of each notification attempt
+ */
+function sendSystemNotification($user_id, $title, $message, $telegram_message = null, $user_data = []) {
+    $results = [
+        'database' => false,
+        'telegram' => false
+    ];
+    
+    // 1. SAVE TO DATABASE (internal notification)
+    $results['database'] = createNotification($user_id, $title, $message);
+    
+    // 2. SEND TO TELEGRAM (if configured and message provided)
+    if ($telegram_message) {
+        $results['telegram'] = sendTelegramMessage($telegram_message);
+    }
+    
+    return $results;
+}
+
 /**
  * Main function to send notifications across all enabled channels
  */

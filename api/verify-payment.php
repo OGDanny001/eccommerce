@@ -47,16 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($order = $result_order->fetch_assoc()) {
             $current_user = getCurrentUser();
             
-            // Send Telegram notification for payment confirmation
-            // Triggered at: api/verify-payment.php line ~36, after successful payment verification
+            // Send Payment Confirmation Notification - ALL CHANNELS through ONE central function!
             $telegramMessage = "💳 Payment Confirmed\n\nOrder ID: #$order_id\nCustomer: " . htmlspecialchars($current_user['name']) . "\nAmount: $" . number_format($order['total_price'], 2);
-            sendTelegramMessage($telegramMessage);
             
-            // Create database notification
-            createNotification(
+            sendSystemNotification(
                 $order['user_id'],
                 "Payment Confirmed!",
-                "Great news! Your payment for order #$order_id has been confirmed. We're processing your order now!"
+                "Great news! Your payment for order #$order_id has been confirmed. We're processing your order now!",
+                $telegramMessage,
+                $current_user
             );
         }
         

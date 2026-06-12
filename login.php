@@ -49,23 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Password is correct - log the user in!
         loginUser($user['id'], $user['name'], $user['email']);
 
-        // Send Login Notification (external channels)
-        sendNotification(
-            $user,
-            "New Login Detected",
-            "Hello " . $user['name'] . ", a new login was detected on your LuxuryStore account at " . date('Y-m-d H:i:s')
-        );
-        
-        // Send Telegram notification for user login
-        // Triggered at: login.php line ~52, after successful password verification
+        // Send Login Notification - ALL CHANNELS through ONE central function!
         $telegramMessage = "🔐 User Login\n\nName: " . htmlspecialchars($user['name']) . "\nEmail: " . htmlspecialchars($user['email']) . "\nTime: " . date('Y-m-d H:i:s');
-        sendTelegramMessage($telegramMessage);
         
-        // Create database notification
-        createNotification(
+        sendSystemNotification(
             $user['id'],
             "New Login Detected",
-            "Hello " . $user['name'] . ", a new login was detected on your account at " . date('Y-m-d H:i:s')
+            "Hello " . $user['name'] . ", a new login was detected on your account at " . date('Y-m-d H:i:s'),
+            $telegramMessage,
+            $user
         );
 
         // Redirect to user dashboard

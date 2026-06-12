@@ -147,8 +147,10 @@ Here are secure options you can explore that don't require extensive business do
 - **Admin**: Complete management suite implemented and secured
 - **Payments**: Paystack integrated and tested
 - **Profile System**: Fully working photo uploads and user profile management
-- ✅ **Internal Notification System**: Database-backed notifications with navbar bell icon, unread count badge, recent notifications dropdown, mark as read functionality, and dashboard recent notifications section
-- ✅ **Telegram Notifications**: Implemented Telegram notifications for new user registration, user login, new order, and payment confirmation using cURL. Configuration centralized in config/telegram.php.
+- ✅ **Internal Notification System**: Database-backed notifications with navbar bell icon, unread count badge, recent notifications dropdown, mark as read functionality
+- ✅ **Telegram Notifications**: Implemented Telegram notifications for new user registration, user login, new order, and payment confirmation using cURL. Configuration centralized in config/telegram.php
+- ✅ **Central Notification Function**: Added `sendSystemNotification` in includes/notifications.php that handles both database and Telegram notifications through one function call to eliminate duplicate code
+- ✅ **Removed Dashboard Notifications**: Removed the recent notifications section from user/dashboard.php to keep the interface clean (notifications are now only accessible via navbar bell)
 
 ## Next Planned Phase
 

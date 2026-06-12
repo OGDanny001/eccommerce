@@ -130,23 +130,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $current_user = getCurrentUser();
         $current_user['phone'] = $phone; // Use the phone from shipping info
         
-        // External notifications
-        sendNotification(
-            $current_user,
-            "Order Placed Successfully",
-            "Hello " . $current_user['name'] . ", your order #$order_id has been placed successfully for $" . number_format($total_price, 2) . ". We will notify you when it ships!"
-        );
-        
-        // Send Telegram notification for new order
-        // Triggered at: api/order-create.php line ~128, after order is created in database
+        // Send Order Notification - ALL CHANNELS through ONE central function!
         $telegramMessage = "🛒 New Order\n\nOrder ID: #$order_id\nCustomer: " . htmlspecialchars($current_user['name']) . "\nAmount: $" . number_format($total_price, 2);
-        sendTelegramMessage($telegramMessage);
         
-        // Database notification
-        createNotification(
+        sendSystemNotification(
             $user_id,
             "Order Placed Successfully",
-            "Hello " . $current_user['name'] . ", your order #$order_id has been placed successfully for $" . number_format($total_price, 2) . ". We will notify you when it ships!"
+            "Hello " . $current_user['name'] . ", your order #$order_id has been placed successfully for $" . number_format($total_price, 2) . ". We will notify you when it ships!",
+            $telegramMessage,
+            $current_user
         );
     } catch (Exception $e) {
         // Ignore notification errors, order is still good
