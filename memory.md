@@ -31,6 +31,7 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 - ✅ **Profile Picture System**: All users (admin & customer) can upload profile photos via the profile page
 - ✅ **Navbar & Admin UI Spacing**: Cleaned up padding, spacing, and visual hierarchy
 - ✅ **Notification System**: Centralized service for Email, Telegram, WhatsApp, and SMS
+- ✅ **Internal Notifications**: Database-backed notifications with navbar bell icon, unread count badge, and dashboard notifications section
 - ✅ **Coupon System**: Full lifecycle management (CRUD) and real-time checkout validation
 - ✅ **Admin Analytics & Charts**: Real-time statistics, revenue charts, top selling products, and order status breakdown
 - ✅ **Payment Gateway Research**: Alternative options for non-document verification
@@ -72,6 +73,7 @@ To enable notifications, update `includes/notifications.php` with:
 - **cart**: id, user_id, product_id, quantity
 - **orders**: id, user_id, total_price, status, first_name, last_name, email, phone, address, country, state, city, zip_code, shipping_cost, created_at
 - **order_items**: id, order_id, product_id, quantity, price
+- **notifications**: id, user_id, title, message, is_read, created_at
 
 ## File Structure
 
@@ -87,7 +89,8 @@ To enable notifications, update `includes/notifications.php` with:
 │   ├── order-create.php       # Checkout logic
 │   ├── product-crud.php       # Admin product logic
 │   ├── update-order-status.php
-│   └── verify-payment.php     # Paystack verification
+│   ├── verify-payment.php     # Paystack verification
+│   └── notifications.php      # Notification operations (mark as read, etc.)
 ├── user/                      # Customer pages
 │   ├── dashboard.php
 │   ├── orders.php
@@ -98,7 +101,8 @@ To enable notifications, update `includes/notifications.php` with:
 │   ├── admin-header.php       # Admin UI Shell
 │   ├── admin-footer.php       # Admin Scripts
 │   ├── header.php             # Customer UI Shell
-│   └── footer.php             # Customer Scripts
+│   ├── footer.php             # Customer Scripts
+│   └── notifications.php      # Notification functions (internal & external)
 ├── assets/                    # Static Assets
 ├── components/                # JS UI Components
 ├── uploads/                   # User profile picture storage
@@ -124,10 +128,8 @@ Here are secure options you can explore that don't require extensive business do
 - **Admin**: Complete management suite implemented and secured
 - **Payments**: Paystack integrated and tested
 - **Profile System**: Fully working photo uploads and user profile management
+- ✅ **Internal Notification System**: Database-backed notifications with navbar bell icon, unread count badge, recent notifications dropdown, mark as read functionality, and dashboard recent notifications section
 
 ## Next Planned Phase
 
-- **Coupons**: Implementation of discount code system
-- **Notifications**: Email/SMS notifications for orders, account actions, etc.
 - **Advanced Admin**: Sales reporting and analytics charts
-- **Email Notifications**: Automated order confirmation emails

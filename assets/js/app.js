@@ -512,5 +512,43 @@ style.textContent = `
         padding: 0.5rem 0;
         display: block;
     }
+    
+    /* Notification Dropdown Styles */
+    .notification-item {
+        display: block;
+        padding: 1rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+        transition: background 0.2s;
+    }
+    
+    .notification-item:hover {
+        background: var(--bg-secondary);
+    }
+    
+    .notification-item.unread {
+        background: rgba(79, 70, 229, 0.05);
+        border-left: 3px solid var(--primary-color);
+    }
+    
+    .notification-item.unread:hover {
+        background: rgba(79, 70, 229, 0.1);
+    }
+    
+    /* Notification Card Styles */
+    .notification-card {
+        transition: all 0.2s;
+        border-left: 3px solid var(--border-color);
+    }
+    
+    .notification-card.unread {
+        border-left: 3px solid var(--primary-color);
+        background: rgba(79, 70, 229, 0.05);
+    }
+    
+    .notification-card:hover {
+        box-shadow: var(--shadow-sm);
+    }
 `;
 document.head.appendChild(style);

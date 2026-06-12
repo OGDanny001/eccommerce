@@ -4,6 +4,7 @@ function getNavbarHTML() {
     
     let accountLink = '';
     let navLinks = '';
+    let notificationBell = '';
 
     if (isAdmin) {
         // ADMIN NAVBAR
@@ -27,6 +28,43 @@ function getNavbarHTML() {
         `;
     } else if (isLoggedIn) {
         // CUSTOMER NAVBAR
+        const unreadCount = notificationData ? notificationData.unread_count : 0;
+        const recentNotifications = notificationData ? notificationData.recent_notifications : [];
+        
+        let notificationsDropdown = '';
+        if (recentNotifications.length > 0) {
+            notificationsDropdown = recentNotifications.map(n => `
+                <a href="javascript:void(0)" class="notification-item ${n.is_read ? 'read' : 'unread'}" data-id="${n.id}" onclick="markNotificationRead(${n.id})">
+                    <div style="font-weight: 600;">${n.title}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">${n.message}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">${new Date(n.created_at).toLocaleDateString()}</div>
+                </a>
+            `).join('');
+        } else {
+            notificationsDropdown = '<div style="padding: 1rem; text-align: center; color: var(--text-secondary);">No notifications yet</div>';
+        }
+        
+        notificationBell = `
+            <div class="notification-dropdown" style="position: relative;">
+                <button class="icon-btn notification-btn" id="notificationBtn" style="position: relative;">
+                    <i class="fas fa-bell"></i>
+                    ${unreadCount > 0 ? `<span class="badge notification-badge" style="background:#ef4444;">${unreadCount}</span>` : ''}
+                </button>
+                <div class="notification-dropdown-menu" id="notificationDropdown" style="display: none; position: absolute; top: 100%; right: 0; width: 350px; background: var(--bg-primary); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 1000; margin-top: 0.5rem;">
+                    <div style="padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                        <strong>Notifications</strong>
+                        <button onclick="markAllNotificationsRead()" style="color: var(--primary-color); background:none; border:none; cursor:pointer; font-size: 0.875rem;">Mark all as read</button>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${notificationsDropdown}
+                    </div>
+                    <div style="padding: 1rem; border-top: 1px solid var(--border-color); text-align: center;">
+                        <a href="/eccommerce/user/dashboard.php#notifications" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+        `;
+        
         accountLink = `
             <a href="/eccommerce/user/dashboard.php" class="btn btn-sm btn-outline" style="display:flex;align-items:center;gap:0.5rem;">
                 ${currentUser.profile_pic 
@@ -83,9 +121,10 @@ function getNavbarHTML() {
 
                 <div class="nav-actions">
                     <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Search products...">
+                        <input type="text" id="searchInput" placeholder="Search products..." />
                         <button id="searchBtn"><i class="fas fa-search"></i></button>
                     </div>
+                    ${notificationBell}
                     <a href="/eccommerce/wishlist.html" class="icon-btn">
                         <i class="fas fa-heart"></i>
                         <span class="badge wishlist-badge">0</span>
@@ -109,9 +148,55 @@ function renderNavbar() {
     // Mobile menu toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const navLinks = document.getElementById('navLinks');
-    mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.toggle('nav-links-mobile');
-    });
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('nav-links-mobile');
+        });
+    }
+    
+    // Notification dropdown toggle
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    if (notificationBtn && notificationDropdown) {
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationDropdown.style.display = notificationDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            notificationDropdown.style.display = 'none';
+        });
+    }
+}
+
+// Notification functions
+async function markNotificationRead(id) {
+    try {
+        await fetch('/eccommerce/api/notifications.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'action=mark_read&notification_id=' + id
+        });
+        // Refresh page to update UI
+        window.location.reload();
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
+}
+
+async function markAllNotificationsRead() {
+    try {
+        await fetch('/eccommerce/api/notifications.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'action=mark_all_read'
+        });
+        // Refresh page to update UI
+        window.location.reload();
+    } catch (error) {
+        console.error('Error marking notifications as read:', error);
+    }
 }
 
 renderNavbar();

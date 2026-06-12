@@ -4,6 +4,7 @@
 // ----------------------
 // Require the user to be logged in to access this page
 require '../includes/auth.php';
+require '../includes/notifications.php';
 requireLogin();
 
 // IF ADMIN, REDIRECT TO ADMIN DASHBOARD
@@ -46,6 +47,9 @@ $recent_orders = $conn->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY
 $recent_orders->bind_param("i", $current_user['id']);
 $recent_orders->execute();
 $recent_orders_result = $recent_orders->get_result();
+
+// Get user notifications (max 5 for dashboard)
+$notifications = getUserNotifications($current_user['id'], 5);
 ?>
 
     <style>
@@ -133,6 +137,76 @@ $recent_orders_result = $recent_orders->get_result();
         .order-status-delivered { background:#ecfdf5; color:#065f46; }
         .order-status-pending { background:#fffbeb; color:#92400e; }
         
+        /* Notifications styles */
+        .notifications-section { margin-top: 3rem; }
+        .notification-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+        .notification-card.unread {
+            border-left: 4px solid var(--primary-color);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        .notification-card:hover {
+            box-shadow: var(--shadow-sm);
+        }
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .notification-title {
+            font-weight: 600;
+            margin: 0;
+        }
+        .notification-date {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        .notification-message {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        .mark-read-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+        }
+        .mark-read-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Notification dropdown item styles */
+        .notification-item {
+            display: block;
+            padding: 1rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        .notification-item:hover {
+            background: var(--bg-secondary);
+        }
+        .notification-item.unread {
+            background: rgba(79, 70, 229, 0.05);
+        }
+        .notification-item.unread:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+        .notification-badge {
+            background: #ef4444 !important;
+        }
+        
         @media (max-width:768px) {
             .account-layout { grid-template-columns:1fr; }
             .account-sidebar { position:sticky; top:80px; }
@@ -194,6 +268,36 @@ $recent_orders_result = $recent_orders->get_result();
                         </div>
                     </div>
 
+                    <!-- Recent Notifications Card -->
+                    <div style="margin-top: 3rem;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                            <h4 style="margin:0; font-size:1.25rem;">Recent Notifications</h4>
+                            <button onclick="markAllNotificationsRead()" style="color:var(--primary-color); background:none; border:none; cursor:pointer; font-weight:600;">Mark all as read</button>
+                        </div>
+                        
+                        <?php if (count($notifications) > 0): ?>
+                            <div style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:1rem;">
+                                <?php foreach ($notifications as $notification): ?>
+                                    <div class="notification-card <?php echo $notification['is_read'] ? '' : 'unread'; ?>" data-id="<?php echo $notification['id']; ?>" style="padding:1rem; border-radius:var(--radius-md); margin-bottom:0.5rem; cursor:pointer;" onclick="markNotificationRead(<?php echo $notification['id']; ?>)">
+                                        <div class="notification-header">
+                                            <h5 class="notification-title" style="font-size:1rem; margin-bottom:0.25rem;"><?php echo htmlspecialchars($notification['title']); ?></h5>
+                                            <span class="notification-date"><?php echo date('M j, Y, g:i A', strtotime($notification['created_at'])); ?></span>
+                                        </div>
+                                        <p class="notification-message"><?php echo htmlspecialchars($notification['message']); ?></p>
+                                        <?php if (!$notification['is_read']): ?>
+                                            <span style="display:inline-block; margin-top:0.5rem; font-size:0.8rem; color:var(--primary-color); font-weight:600;">Unread</span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <div style="text-align:center; padding:2rem; color:var(--text-secondary);">
+                                <i class="fas fa-bell-slash" style="font-size:3rem; margin-bottom:1rem; opacity:0.5;"></i>
+                                <p>No notifications yet</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
                     <!-- Recent Orders -->
                     <div style="margin-top: 3rem;">
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
@@ -253,5 +357,35 @@ $recent_orders_result = $recent_orders->get_result();
             </div>
         </div>
     </section>
+
+    <script>
+        async function markNotificationRead(id) {
+            try {
+                await fetch('/eccommerce/api/notifications.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'action=mark_read&notification_id=' + id
+                });
+                // Refresh page to update UI
+                window.location.reload();
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        }
+        
+        async function markAllNotificationsRead() {
+            try {
+                await fetch('/eccommerce/api/notifications.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'action=mark_all_read'
+                });
+                // Refresh page to update UI
+                window.location.reload();
+            } catch (error) {
+                console.error('Error marking notifications as read:', error);
+            }
+        }
+    </script>
 
 <?php require '../includes/footer.php'; ?>
