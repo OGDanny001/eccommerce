@@ -62,14 +62,16 @@ Complete, modern e-commerce platform built with HTML, CSS, vanilla JavaScript, a
 
 ## Configuration Required
 To enable notifications:
-1. **Telegram**: Update `config/telegram.php` with your Telegram Bot Token
+1. **Set up .env file**: 
+   - Copy `.env.example` to `.env`
+   - Update `TELEGRAM_BOT_TOKEN` in `.env` with your actual bot token
 2. **Twilio**: Update `includes/notifications.php` with Twilio SID, Token, and Phone Numbers
 
 ## Telegram Integration
 ### How to Test Telegram Notifications
 1. Create a Telegram bot using @BotFather and get your bot token
 2. Start a chat with your bot and get your chat ID (use @userinfobot)
-3. Set your bot token in `config/telegram.php`
+3. Set your bot token in the `.env` file (NOT in config/telegram.php directly!)
 4. Test each event:
    - **New User Registration**: Register a new account
    - **User Login**: Login to an existing account
@@ -151,6 +153,7 @@ Here are secure options you can explore that don't require extensive business do
 - ✅ **Telegram Notifications**: Implemented Telegram notifications for new user registration, user login, new order, and payment confirmation using cURL. Configuration centralized in config/telegram.php
 - ✅ **Central Notification Function**: Added `sendSystemNotification` in includes/notifications.php that handles both database and Telegram notifications through one function call to eliminate duplicate code
 - ✅ **Removed Dashboard Notifications**: Removed the recent notifications section from user/dashboard.php to keep the interface clean (notifications are now only accessible via navbar bell)
+- ✅ **.env File Support**: Added secure secret management using .env file with .gitignore to keep secrets out of GitHub! Includes includes/env.php for simple .env loading without external packages.
 
 ## Next Planned Phase
 
